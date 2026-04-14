@@ -44,6 +44,13 @@ app.post('/users', async (req, res) => {
   } catch (error) { res.status(500).json({ error: 'Erro ao criar usuário' }); }
 });
 
+app.get('/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) { res.status(500).json({ error: 'Erro ao buscar usuários' }); }
+});
+
 // ==========================================
 // 3. ROTAS DE MÚSICAS (TRACKS)
 // ==========================================
@@ -72,6 +79,42 @@ app.get('/tracks', async (req, res) => {
     const tracks = await prisma.track.findMany({ include: { album: true } });
     res.json(tracks);
   } catch (error) { res.status(500).json({ error: 'Erro ao buscar músicas' }); }
+});
+
+// ==========================================
+// 4. ROTAS DE AVALIAÇÕES (REVIEWS)
+// ==========================================
+app.post('/reviews', async (req, res) => {
+  try {
+    const { rating, comment, user_id, track_id } = req.body;
+    
+    const newReview = await prisma.review.create({
+      data: {
+        rating: Number(rating),
+        comment,
+        user_id,
+        track_id
+      }
+    });
+    res.status(201).json(newReview);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao criar avaliação. Verifique user_id e track_id.' });
+  }
+});
+
+app.get('/reviews', async (req, res) => {
+  try {
+    const reviews = await prisma.review.findMany({
+      include: {
+        user: true,
+        track: { include: { album: true } } // Traz a música E o álbum dela!
+      }
+    });
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar avaliações.' });
+  }
 });
 
 // LIGANDO O MOTOR
