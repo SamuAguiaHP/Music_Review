@@ -19,67 +19,69 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ... (O resto das rotas de Álbuns continua igualzinho) ...
 
 // ==========================================
-// ROTAS DE ÁLBUNS (CRUD)
+// ROTAS DE USUÁRIOS (CRUD)
 // ==========================================
 
-// 1. CREATE - Cadastrar um novo álbum (POST)
-app.post('/albums', async (req, res) => {
+// 1. CREATE - Cadastrar um novo usuário (POST)
+app.post('/users', async (req, res) => {
   try {
-    const { title, artist, release_year, cover_url } = req.body;
+    // Adicionamos o password aqui para o Express extrair do corpo da requisição
+    const { name, email, password } = req.body;
     
-    const newAlbum = await prisma.album.create({
-      data: { title, artist, release_year, cover_url }
+    const newUser = await prisma.user.create({
+      // Adicionamos o password aqui para o Prisma salvar no banco
+      data: { name, email, password }
     });
     
-    res.status(201).json(newAlbum); // 201 significa "Criado com sucesso"
+    res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao criar o álbum.' });
+    res.status(500).json({ error: 'Erro ao criar o usuário.' });
   }
 });
 
-// 2. READ - Listar todos os álbuns (GET)
-app.get('/albums', async (req, res) => {
+// 2. READ - Listar todos os usuários (GET)
+app.get('/users', async (req, res) => {
   try {
-    const albums = await prisma.album.findMany();
-    res.json(albums);
+    const users = await prisma.user.findMany();
+    res.json(users);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar os álbuns.' });
+    res.status(500).json({ error: 'Erro ao buscar os usuários.' });
   }
 });
 
-// 3. UPDATE - Atualizar os dados de um álbum (PUT)
-app.put('/albums/:id', async (req, res) => {
+// 3. UPDATE - Atualizar os dados de um usuário (PUT)
+app.put('/users/:id', async (req, res) => {
   try {
-    const { id } = req.params; // Pega o ID que vem na URL
-    const { title, artist, release_year, cover_url } = req.body;
+    const { id } = req.params;
+    // Adicionamos o password aqui também
+    const { name, email, password } = req.body;
 
-    const updatedAlbum = await prisma.album.update({
+    const updatedUser = await prisma.user.update({
       where: { id: id },
-      data: { title, artist, release_year, cover_url }
+      data: { name, email, password }
     });
     
-    res.json(updatedAlbum);
+    res.json(updatedUser);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao atualizar o álbum.' });
+    res.status(500).json({ error: 'Erro ao atualizar o usuário.' });
   }
 });
 
-// 4. DELETE - Apagar um álbum (DELETE)
-app.delete('/albums/:id', async (req, res) => {
+// 4. DELETE - Apagar um usuário (DELETE)
+app.delete('/users/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    await prisma.album.delete({
+    await prisma.user.delete({
       where: { id: id }
     });
     
-    res.status(204).send(); // 204 significa "Sucesso, sem conteúdo para retornar"
+    res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao deletar o álbum.' });
+    res.status(500).json({ error: 'Erro ao deletar o usuário.' });
   }
 });
 
