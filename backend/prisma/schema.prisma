@@ -36,7 +36,7 @@ model Track {
   id           String   @id @default(uuid())
   title        String
   track_number Int
-  
+  duration     Int
   // Relacionamento com o Álbum
   album_id     String
   album        Album    @relation(fields: [album_id], references: [id], onDelete: Cascade)
