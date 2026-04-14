@@ -1,4 +1,4 @@
-<h1 align="center" style="font-weight: bold;">Music Review 🎧</h1>
+<h1 align="center" style="font-weight: bold;">MelodyRate 🎧</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React">
