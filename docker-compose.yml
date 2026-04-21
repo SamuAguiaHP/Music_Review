@@ -1,0 +1,35 @@
+services:
+  # Banco de Dados PostgreSQL
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: music_review_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Servidor Backend
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      # Note que usamos 'db' no lugar de 'localhost' aqui
+      DATABASE_URL: "postgresql://user:password@db:5432/music_review_db?schema=public"
+    depends_on:
+      - db
+
+  # Interface Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

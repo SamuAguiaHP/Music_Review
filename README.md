@@ -1,23 +1,89 @@
-<h1 align="center" style="font-weight: bold;">Music Review 🎧</h1>
+# 🎵 Music Review
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React">
-  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite">
-  <img src="https://img.shields.io/badge/Spotify-1DB954?style=for-the-badge&logo=spotify&logoColor=white" alt="Spotify">
-</p>
-
-<p align="center">
-O Music Review é uma plataforma Full-Stack de avaliação musical desenvolvida como projeto de trainee para a Comp Júnior (UFLA). A aplicação permite avaliar álbuns e faixas, com catálogo alimentado pela API do Spotify. Construído com React, Node.js, Docker e JWT.
-</p>
+O **Music Review** é uma plataforma de avaliação musical desenvolvida como projeto do processo de Trainee da **Comp Júnior (UFLA)**. O objetivo do sistema é permitir que usuários explorem álbuns e músicas, deixando notas e comentários sobre suas faixas favoritas.
 
 ---
 
-## 🚧 Status do Projeto
+## 🚀 Status do Projeto: Back-end Base Concluído
+Atualmente, o núcleo lógico do sistema (Back-end) está totalmente funcional, com todas as rotas CRUD e relacionamentos de banco de dados implementados.
 
-**Em Desenvolvimento (Semana 1):** Setup inicial do Front-end, estruturação de pastas e preparação para integração com a API do Spotify. 
+---
 
-## 🚀 Como rodar o Front-end localmente (Fase Atual)
+## 🛠️ Tecnologias Utilizadas
 
-1. Clone o repositório:
-```bash
-git clone [https://github.com/SamuAguiaHP/Music_Review](https://github.com/SamuAguiaHP/Music_Review)
+* **Node.js** & **Express**: Estrutura do servidor e roteamento.
+* **Prisma ORM**: Gerenciamento e modelagem do banco de dados.
+* **PostgreSQL**: Banco de dados relacional.
+* **Insomnia**: Testes de requisições API.
+* **Git & GitHub**: Versionamento seguindo o Padrão Athena.
+
+---
+
+## 📋 Funcionalidades Implementadas (Back-end)
+
+### 👤 Usuários (`Users`)
+* Cadastro de usuários com nome, email e senha.
+* Listagem e gerenciamento de perfis.
+
+### 💿 Álbuns (`Albums`)
+* Cadastro de álbuns (Título, Artista, Ano de Lançamento e Capa).
+* Relacionamento um-para-muitos com as músicas.
+
+### 🎸 Músicas (`Tracks`)
+* Cadastro de faixas vinculadas obrigatoriamente a um álbum.
+* Suporte a metadados como duração e número da faixa.
+
+### ✍️ Avaliações (`Reviews`)
+* Sistema de notas e comentários.
+* Conexão entre o Usuário e a Música avaliada.
+
+---
+
+## 🔧 Como rodar o projeto localmente
+
+1. **Clone o repositório:**
+   ```bash
+   git clone [https://github.com/SamuAguiaHP/Music_Review]
+   ```
+
+2. **Acesse a pasta do servidor:**
+   ```bash
+   cd backend
+   ```
+
+3. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+
+4. **Configure as variáveis de ambiente:**
+   Crie um arquivo `.env` na raiz da pasta `backend` e adicione sua URL de conexão com o PostgreSQL:
+   ```env
+   DATABASE_URL="sua_string_de_conexao_aqui"
+   ```
+
+5. **Sincronize o banco de dados:**
+   ```bash
+   npx prisma db push
+   ```
+
+6. **Inicie o servidor:**
+   ```bash
+   npm run dev
+   ```
+   O servidor estará rodando em: `http://localhost:3000`
+
+---
+
+## 🚩 Próximos Passos
+- [ ] Integração com a **API do Spotify** para busca real de dados.
+- [ ] Desenvolvimento do **Front-end** em React + Vite.
+- [ ] Implementação de Autenticação (JWT).
+
+---
+
+## 👨‍💻 Autor
+**Samuel**
+Estudante de Ciência da Computação / Sistemas de Informação - **UFLA**
+Trainee Comp Júnior 2026
+```
