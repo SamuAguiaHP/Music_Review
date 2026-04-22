@@ -1,4 +1,10 @@
-# 🎵 Music Review
+<h1 align="center" style="font-weight: bold;">Music Review 🎧</h1>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React">
+  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite">
+  <img src="https://img.shields.io/badge/Spotify-1DB954?style=for-the-badge&logo=spotify&logoColor=white" alt="Spotify">
+</p>
 
 O **Music Review** é uma plataforma de avaliação musical desenvolvida como projeto do processo de Trainee da **Comp Júnior (UFLA)**. O objetivo do sistema é permitir que usuários explorem álbuns e músicas, deixando notas e comentários sobre suas faixas favoritas.
 
@@ -86,4 +92,3 @@ Atualmente, o núcleo lógico do sistema (Back-end) está totalmente funcional, 
 **Samuel**
 Estudante de Ciência da Computação / Sistemas de Informação - **UFLA**
 Trainee Comp Júnior 2026
-```
