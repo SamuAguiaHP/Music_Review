@@ -14,7 +14,9 @@ services:
 
   # Servidor Backend
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -22,6 +24,9 @@ services:
       DATABASE_URL: "postgresql://user:password@db:5432/music_review_db?schema=public"
     depends_on:
       - db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
   # Interface Frontend
   frontend:
