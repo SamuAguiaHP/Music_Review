@@ -30,6 +30,12 @@
   }
 }
 
+/* Adicione isso no seu arquivo CSS global para os placeholders aparecerem bem */
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important; /* Branco semi-transparente para contraste */
+  opacity: 1; /* Garante visibilidade no Firefox */
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;

@@ -43,7 +43,7 @@ function Header() {
             <li><a className="dropdown-item" href="#">Gerenciar Conta</a></li>
             <li><a className="dropdown-item" href="#">Configurações</a></li>
             <li><hr className="dropdown-divider" /></li>
-            <li><a className="dropdown-item text-danger" href="#">Sair</a></li>
+            <li><a className="dropdown-item text-danger" href="/login">Sair</a></li>
           </ul>
         </div>
 
