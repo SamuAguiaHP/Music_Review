@@ -1,3 +1,12 @@
+html, body, #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #0d0614; /* Coloca a cor de fundo mais escura caso algo vaze */
+  overflow-x: hidden; /* Evita a barra de rolagem horizontal */
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
