@@ -1,8 +1,35 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api'; // Importa a nossa config
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(''); // Limpa erros anteriores
+
+    try {
+      const response = await api.post('/login', { email, password });
+      
+      // Se chegamos aqui, o login foi um sucesso!
+      const { token, user } = response.data;
+
+      // Guardamos o "Crachá" (Token) e o nome do utilizador
+      localStorage.setItem('@MusicReview:token', token);
+      localStorage.setItem('@MusicReview:user', JSON.stringify(user));
+
+      alert(`Bem-vindo, ${user.name}!`);
+      navigate('/'); // Redireciona para a Home
+      
+    } catch (err) {
+      // Se o backend devolver erro (401, 500, etc)
+      setError(err.response?.data?.error || 'Erro ao ligar ao servidor');
+    }
+  };
 
   return (
     /* FUNDO TOTAL: Ocupa toda a tela e centraliza o conteúdo interno (o container) */
@@ -46,7 +73,8 @@ function Login() {
               <h2 className="fw-bold mb-2 text-white">Bem-vindo de volta</h2>
               <p className="mb-4 small text-white-50">Por favor, insira seus dados para entrar.</p>
 
-              <form>
+              <form onSubmit={handleLogin}>
+                {error && <div className="alert alert-danger">{error}</div>}
                 <div className="mb-3">
                   <label className="form-label small fw-bold text-uppercase text-white-50">E-mail</label>
                   <input 
