@@ -1,19 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { PrismaClient } = require('@prisma/client');
-const { PrismaPg } = require('@prisma/adapter-pg');
-const { Pool } = require('pg');
-
-// Configuração de Conexão (Prisma 7)
-const connectionString = `${process.env.DATABASE_URL}`;
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const routes = require('./routes');
+const prisma = require('./prisma'); // Importa a conexão centralizada
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(routes);
 
 // ==========================================
 // 1. ROTAS DE ÁLBUNS
@@ -118,7 +112,7 @@ app.get('/reviews', async (req, res) => {
 });
 
 // LIGANDO O MOTOR
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
