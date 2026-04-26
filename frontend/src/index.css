@@ -58,6 +58,43 @@
 
 body {
   margin: 0;
+  background-color: #121212; /* Fundo padrão do login */
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.dropdown-item:hover {
+  background-color: #a855f7 !important;
+  color: white !important;
+}
+
+.shadow-hover:hover {
+  box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
+}
+
+.hover-white:hover {
+  color: white !important;
+  opacity: 0.8;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Scrollbar personalizada para combinar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+::-webkit-scrollbar-thumb {
+  background: #2b1055;
+  border-radius: 10px;
+}
+
+main {
+  transition: margin-left 0.3s ease;
 }
 
 #root {
