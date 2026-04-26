@@ -21,10 +21,11 @@ model User {
 // 2. Tabela de Álbuns
 model Album {
   id           String   @id @default(uuid())
+  id_spotify String   @unique
   title        String
   artist       String
-  release_year Int
-  cover_url    String?  // Opcional
+  release_year Int?
+  cover_url    String? 
   created_at   DateTime @default(now())
 
   tracks       Track[]  // Um álbum tem várias músicas
