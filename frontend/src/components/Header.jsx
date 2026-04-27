@@ -5,10 +5,12 @@ import React, { useState } from 'react';
 function Header() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const userString = localStorage.getItem('@MusicReview:user');
+  
+  // 1. LER: Agora ele procura no LocalStorage PRIMEIRO. Se não achar, procura no SessionStorage.
+  const userString = localStorage.getItem('@MusicReview:user') || sessionStorage.getItem('@MusicReview:user');
   const user = userString ? JSON.parse(userString) : null;
 
-// NOVO: Função que dispara ao dar "Enter" na pesquisa
+  // Função que dispara ao dar "Enter" na pesquisa
   const handleSearch = (e) => {
     e.preventDefault(); // Evita que a página recarregue
     if (!search.trim()) return; // Não faz nada se estiver vazio
@@ -16,8 +18,12 @@ function Header() {
   };
 
   const handleLogout = () => {
+    // 2. DESTRUIR: Limpamos os DOIS cofres para garantir que nada fica para trás
     localStorage.removeItem('@MusicReview:token');
     localStorage.removeItem('@MusicReview:user');
+    sessionStorage.removeItem('@MusicReview:token');
+    sessionStorage.removeItem('@MusicReview:user');
+    
     navigate('/login');
   };
 

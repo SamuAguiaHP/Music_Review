@@ -5,26 +5,29 @@ import api from '../services/api'; // Importa a nossa config
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(''); // Limpa erros anteriores
+    setError('');
 
-    try {
+   try {
       const response = await api.post('/login', { email, password });
-      
-      // Se chegamos aqui, o login foi um sucesso!
-      const { token, user } = response.data;
+      const { token, user } = response.data; // Assumindo que o seu back-end devolve o token aqui
 
-      // Guardamos o "Crachá" (Token) e o nome do utilizador
-      localStorage.setItem('@MusicReview:token', token);
-      localStorage.setItem('@MusicReview:user', JSON.stringify(user));
+      // A MÁGICA ACONTECE AQUI:
+      const storage = rememberMe ? localStorage : sessionStorage;
 
-      alert(`Bem-vindo, ${user.name}!`);
-      navigate('/'); // Redireciona para a Home
+      // Limpa os dois para evitar conflitos de logins antigos
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+      // Guarda no sítio certo
+      storage.setItem('@MusicReview:token', token);
+      storage.setItem('@MusicReview:user', JSON.stringify(user));
       
+      navigate('/'); // Vai para a Home
     } catch (err) {
       // Se o backend devolver erro (401, 500, etc)
       setError(err.response?.data?.error || 'Erro ao ligar ao servidor');
@@ -36,7 +39,7 @@ function Login() {
     <div className="vw-100 min-vh-100 m-0 p-0 d-flex align-items-center justify-content-center" 
          style={{ background: 'linear-gradient(to bottom, #2b164d 0%, #0d0614 100%)', overflowX: 'hidden' }}>
       
-      {/* CONTAINER: A grande "mágica" aqui. Ele impede que os itens se afastem infinitamente em telas grandes. */}
+      {/* CONTAINER: Impede que os itens se afastem infinitamente em telas grandes. */}
       <div className="container">
         
         {/* ROW: g-4/g-lg-5 cria um espaçamento amigável entre os lados, e o justify-content-center junta os dois no meio */}
@@ -109,13 +112,18 @@ function Login() {
                   />
                 </div>
 
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                  <div className="form-check">
-                    <input className="form-check-input bg-dark border-secondary shadow-none" type="checkbox" id="remember" />
-                    <label className="form-check-label small text-white-50" htmlFor="remember">Lembrar de mim</label>
-                  </div>
-                  <a href="#" className="small text-decoration-none fw-bold" style={{ color: '#c084fc' }}>Esqueceu a senha?</a>
-                </div>
+            <div className="form-check mb-4">
+              <input 
+                className="form-check-input" 
+                type="checkbox" 
+                id="rememberMe" 
+                checked={rememberMe} // Liga a caixa à variável
+                onChange={(e) => setRememberMe(e.target.checked)} // Atualiza quando clica
+              />
+              <label className="form-check-label text-secondary small" htmlFor="rememberMe">
+                Lembrar de mim
+              </label>
+            </div>
 
                 <button type="submit" className="btn btn-lg w-100 fw-bold shadow-sm text-white" 
                         style={{ background: '#a855f7', borderRadius: '12px', padding: '14px', border: 'none' }}>
