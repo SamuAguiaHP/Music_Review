@@ -8,12 +8,12 @@
   <img src="https://img.shields.io/badge/Spotify-1DB954?style=for-the-badge&logo=spotify&logoColor=white" alt="Spotify">
 </p>
 
-O **Music Review** é uma plataforma full-stack de avaliação musical desenvolvida como projeto final do processo de Trainee da **Comp Júnior (UFLA)**. O objetivo do sistema é permitir que os usuários explorem álbuns através de dados reais do Spotify, salvando suas faixas favoritas e deixando notas e análises detalhadas.
+O **Music Review** é uma plataforma full-stack de avaliação musical desenvolvida como projeto final do processo de Trainee da **Comp Júnior (UFLA)**. O objetivo do sistema é permitir que os usuários explorem álbuns através de dados reais do Spotify, salvando suas obras favoritas em uma biblioteca privada e deixando notas e análises detalhadas.
 
 ---
 
-## 🚀 Status do Projeto: Autenticação & Integração API Concluídas
-O sistema já conta com um fluxo completo e seguro de autenticação de utilizadores, incluindo recuperação de senha via e-mail e persistência de sessão. A integração ponta-a-ponta (Front-end ↔ Back-end ↔ Banco de Dados ↔ API do Spotify) está totalmente funcional.
+## 🚀 Status do Projeto: Biblioteca Privada & Integração Concluídas
+O sistema já conta com um fluxo completo e seguro de autenticação, e a integração ponta-a-ponta (Front-end ↔ Back-end ↔ Banco de Dados ↔ API do Spotify) está totalmente funcional. Os usuários já podem criar as suas bibliotecas musicais privadas, salvando e removendo álbuns de forma dinâmica.
 
 ---
 
@@ -22,14 +22,14 @@ O sistema já conta com um fluxo completo e seguro de autenticação de utilizad
 ### Front-end (UI/UX)
 * **React + Vite**: Construção rápida e modular da interface.
 * **React Router DOM**: Navegação fluida entre páginas (SPA).
-* **Bootstrap & CSS**: Estilização responsiva.
-* **Axios**: Consumo da API interna e externa.
+* **Bootstrap & CSS**: Estilização responsiva com efeitos visuais avançados.
+* **Axios**: Consumo da API interna e externa com interceptação de tokens.
 
 ### Back-end & Infraestrutura
 * **Node.js & Express**: Estrutura robusta do servidor e roteamento.
-* **Prisma ORM**: Gerenciamento, migrações e modelagem do banco de dados.
+* **Prisma ORM**: Gerenciamento, migrações e modelagem avançada do banco de dados relacional.
 * **PostgreSQL (Docker)**: Banco de dados relacional conteinerizado.
-* **JWT & Bcrypt**: Autenticação de rotas e criptografia de senhas.
+* **JWT & Bcrypt**: Autenticação de rotas privadas e criptografia de senhas.
 * **Nodemailer + Mailtrap**: Motor de disparo de e-mails transacionais.
 
 ---
@@ -38,14 +38,15 @@ O sistema já conta com um fluxo completo e seguro de autenticação de utilizad
 
 ### 🔒 Segurança & Autenticação
 * Sistema de Registro e Login com validação de dados.
-* Autenticação via **JWT** (JSON Web Token) com criptografia de senhas (Bcrypt).
+* Autenticação via **JWT** (JSON Web Token) protegendo rotas privadas no backend.
 * Funcionalidade **"Lembrar de Mim"** gerenciando sessões no `localStorage` e `sessionStorage`.
 * Fluxo completo de **Recuperação de Senha** com envio de e-mail automatizado.
 
-### 💿 Álbuns & Integração
+### 💿 Biblioteca Privada & Integração Spotify
 * Busca de álbuns em tempo real utilizando a **API oficial do Spotify**.
-* Salvamento automático de Álbuns e Músicas no banco de dados local (PostgreSQL) garantindo persistência estruturada.
-* Relacionamento seguro entre a base de dados do sistema e os identificadores (`id_spotify`) da plataforma externa.
+* **Biblioteca Isolada por Usuário:** O banco de dados relaciona os álbuns salvos especificamente ao usuário logado, garantindo total privacidade.
+* **Atualização Otimista (UI):** Salvamento e exclusão dinâmica de álbuns na interface, alternando estados e removendo itens da tela instantaneamente sem necessidade de recarregar a página.
+* Prevenção de duplicatas arquitetada diretamente no banco de dados.
 
 ---
 
@@ -54,7 +55,7 @@ O sistema já conta com um fluxo completo e seguro de autenticação de utilizad
 ### 1. Preparando o Back-end
 ```bash
 # Clone o repositório
-git clone [https://github.com/SamuAguiaHP/Music_Review.git]
+git clone [https://github.com/SamuAguiaHP/Music_Review.git](https://github.com/SamuAguiaHP/Music_Review.git)
 
 # Acesse a pasta do back-end
 cd Music_Review/backend
@@ -77,14 +78,13 @@ MAIL_PASS="sua_senha_mailtrap"
 
 Suba o Banco de Dados e o Servidor:
 ```bash
-# Inicie o container do PostgreSQL via Docker
+# Inicie os containers (PostgreSQL + Servidor Node) via Docker
 docker-compose up -d
 
-# Sincronize as tabelas do Prisma
-npx prisma migrate dev
+# Sincronize as tabelas do Prisma com o banco
+docker-compose exec backend npx prisma migrate dev
 
-# Inicie o servidor Node.js
-npm run dev
+# (Caso rode o Node localmente sem Docker, use apenas `npm run dev`)
 ```
 
 ### 2. Preparando o Front-end
@@ -104,13 +104,16 @@ Acesse a aplicação no navegador através de: `http://localhost:5173`
 
 ## 🚩 Próximos Passos
 - [x] Integração com a **API do Spotify** para busca real de dados.
-- [x] Desenvolvimento do **Front-end** em React + Vite (Layout Base & Responsividade).
+- [x] Desenvolvimento do **Front-end** em React + Vite.
 - [x] Implementação de Autenticação completa (JWT + Recuperação de Senha).
-- [ ] Desenvolvimento do **CRUD de Reviews** (Dar notas e comentar os álbuns salvos).
+- [x] Criação da **Biblioteca Privada** (Salvar/Remover Álbuns com relação de usuários).
+- [ ] **Diferenciação de Álbuns e Músicas** no Front-end e Back-end.
+- [ ] Desenvolvimento do **CRUD de Reviews** (Dar notas e comentar os itens salvos).
 - [ ] Implementação de Testes Automatizados (Jest/SuperTest).
-- [ ] Gravação do vídeo final de demonstração.
 
 ---
 
 ## 👨‍💻 Autor
-**Samuel** Estudante de Ciência da Computação / Sistemas de Informação - **UFLA** Trainee Comp Júnior 2026
+**Samuel**  
+Estudante de Ciência da Computação / Sistemas de Informação - **UFLA**  
+Trainee Comp Júnior 2026
