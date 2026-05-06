@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 // 1. Recebemos a função onRemove do pai (Home)
 function AlbumCard({ album, isLibrary = false, onRemove }) {
   
   const [isSaved, setIsSaved] = useState(isLibrary);
+  const navigate = useNavigate();
+  const spotifyId = album.id_spotify || album.id;
 
-  const handleToggleAlbum = async () => {
+  const handleToggleAlbum = async (e) => {
+    e.stopPropagation();
     try {
       if (isSaved) {
         // REMOVER
@@ -20,15 +24,32 @@ function AlbumCard({ album, isLibrary = false, onRemove }) {
         }
 
       } else {
-        // ADICIONAR
+        // 1. Buscamos o álbum COMPLETO no nosso Back-end
+        const spotifyResponse = await api.get(`/api/spotify/albums/${album.id_spotify}`);
+        const fullAlbumData = spotifyResponse.data;
+
+        // 2. Extraímos a lista de músicas
+        const rawTracks = fullAlbumData.tracks?.items || [];
+
+        // 3. Formatamos para o Prisma
+        const formattedTracks = rawTracks.map(track => ({
+          id_spotify: track.id,
+          title: track.name,
+          track_number: track.track_number || 1,
+          duration: track.duration_ms || 0,
+        }));
+
+        // 4. Enviamos para a nossa rota de salvar Álbuns
         await api.post('/albums', {
           id_spotify: album.id_spotify,
           title: album.title,
-          artist: album.artist,
-          cover_url: album.cover_url
+          artist: album.artist, 
+          cover_url: album.cover_url,
+          tracks: formattedTracks 
         });
+        
         setIsSaved(true);
-        alert(`Álbum "${album.title}" salvo com sucesso no banco de dados!`);
+        alert(`Álbum "${album.title}" e suas músicas salvos com sucesso!`);
       }
     } catch (error) {
       // 3. CAPTURAMOS O ERRO 409 (JÁ EXISTE) AQUI!
@@ -57,6 +78,7 @@ function AlbumCard({ album, isLibrary = false, onRemove }) {
     <div 
       className="card shadow-hover" 
       style={styles.card}
+      onClick={() => navigate(`/album/${spotifyId}`)}
       onMouseOver={(e) => {
         e.currentTarget.style.transform = 'translateY(-10px)';
         e.currentTarget.style.borderColor = '#a855f7';
@@ -86,8 +108,8 @@ function AlbumCard({ album, isLibrary = false, onRemove }) {
           {/* 3. O botão agora muda de cor e de ícone dependendo do estado! */}
           <button 
             className="btn btn-link p-0" 
-            style={{ color: isSaved ? '#ef4444' : '#a855f7' }} // Vermelho (remover) ou Roxo (salvar)
-            onClick={handleToggleAlbum}
+            style={{ color: isSaved ? '#ef4444' : '#a855f7' }}
+            onClick={(e) => handleToggleAlbum(e)}
             title={isSaved ? "Remover da Biblioteca" : "Salvar na Biblioteca"}
           >
             <i className={isSaved ? "bi bi-dash-circle-fill fs-5" : "bi bi-plus-circle-fill fs-5"}></i>

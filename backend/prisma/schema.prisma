@@ -15,8 +15,9 @@ model User {
   role       String   @default("STANDARD") // Pode ser "STANDARD" ou "ADMIN"
   created_at DateTime @default(now())
   
-  albums    Album[]
-  reviews    Review[] // Relacionamento: Um usuário pode ter várias avaliações
+  tracks     Track[]
+  albums     Album[]
+  reviews    Review[] 
 }
 
 // 2. Tabela de Álbuns
@@ -43,14 +44,23 @@ model Album {
 // 3. Tabela de Músicas
 model Track {
   id           String   @id @default(uuid())
+  id_spotify   String   
   title        String
-  track_number Int
-  duration     Int
-  // Relacionamento com o Álbum
-  album_id     String
-  album        Album    @relation(fields: [album_id], references: [id], onDelete: Cascade)
+  track_number Int?     
+  duration     Int?     
+  
+  // 1. Relacionamento com o Usuário (Dono da música na biblioteca)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 2. Relacionamento com o Álbum é opcional, a pessoa pode querer salvar a música sem salvar o álbum inteiro.
+  album_id     String?
+  album        Album?   @relation(fields: [album_id], references: [id], onDelete: Cascade)
   
   reviews      Review[] // Uma música pode receber várias avaliações
+
+  @@unique([id_spotify, userId])
+  @@map("tracks")
 }
 
 // 4. Tabela de Avaliações

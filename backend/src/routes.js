@@ -16,6 +16,7 @@ routes.post('/login', AuthController.login);
 routes.post('/forgot-password', ForgotPasswordController.recover);
 routes.post('/reset-password', ResetPasswordController.reset);
 routes.get('/api/search', SpotifyController.search);
+routes.get('/api/spotify/albums/:id_spotify', SpotifyController.getAlbum);
 
 // ==========================
 // Rotas Privadas (authMiddleware)

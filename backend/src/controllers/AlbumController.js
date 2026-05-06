@@ -2,19 +2,18 @@ const prisma = require('../prisma'); // Puxa a nossa conexão otimizada com o ba
 
 module.exports = {
   async create(req, res) {
-    // 1. Recebe os dados que o Front-end mandou
-    const { id_spotify, title, artist, cover_url, release_date } = req.body;
-    const userId = req.userId || (req.user && req.user.id) || req.usuarioId; // Capturado pelo seu middleware de autenticação JWT
+    // 1. Agora recebemos também o array de 'tracks' que virá do Front-end
+    const { id_spotify, title, artist, cover_url, release_date, tracks } = req.body;
+    const userId = req.userId || (req.user && req.user.id) || req.usuarioId; 
     
     if (!userId) {
-      return res.status(401).json({ error: "Não foi possível identificar o usuário. Verifique se você está logado e se o token é válido." });
+      return res.status(401).json({ error: "Não foi possível identificar o usuário." });
     }
 
     try {
-      // 1. Procura se ESTE usuário já tem ESSE álbum salvo
       let album = await prisma.album.findUnique({
         where: {
-          id_spotify_userId: { // O Prisma cria esse nome automático para índices compostos
+          id_spotify_userId: { 
             id_spotify: id_spotify,
             userId: userId
           }
@@ -23,24 +22,45 @@ module.exports = {
 
       if (album) {
         return res.status(409).json({ error: "Este álbum já existe na sua biblioteca." });
-      } else {
-        // 2. Se não tiver, cria vinculado ao usuário logado
-        album = await prisma.album.create({
-          data: {
-            id_spotify,
-            title,
-            artist,
-            cover_url,
-            userId,
-            release_year: release_date ? parseInt(release_date.substring(0, 4)) : null
-          }
+      }
+
+      // 2. Cria o Álbum no banco
+      album = await prisma.album.create({
+        data: {
+          id_spotify,
+          title,
+          artist,
+          cover_url,
+          userId,
+          release_year: release_date ? parseInt(release_date.substring(0, 4)) : null
+        }
+      });
+
+      // 3. A MÁGICA DAS MÚSICAS: Se o Front-end mandou as músicas, salvamos todas!
+      if (tracks && Array.isArray(tracks) && tracks.length > 0) {
+        
+        // Preparamos o pacote de dados para cada música
+        const tracksData = tracks.map(track => ({
+          id_spotify: track.id_spotify,
+          title: track.title,
+          track_number: track.track_number || 1,
+          duration: track.duration || 0,
+          album_id: album.id, // <-- Conecta a música ao álbum recém-criado
+          userId: userId      // <-- Conecta a música ao dono da biblioteca
+        }));
+
+        // Inserção em massa! O skipDuplicates impede o banco de crashar 
+        // caso o usuário já tenha salvo uma destas músicas separadamente antes.
+        await prisma.track.createMany({
+          data: tracksData,
+          skipDuplicates: true, 
         });
       }
 
       return res.status(201).json(album);
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: "Erro ao salvar álbum na sua biblioteca." });
+      return res.status(500).json({ error: "Erro ao salvar álbum e músicas na sua biblioteca." });
     }
   },
 

@@ -1,8 +1,8 @@
-const { searchAlbums } = require('../services/spotify');
+const { searchAlbums, getAlbumDetails } = require('../services/spotify');
 
 module.exports = {
+  // 1. Pesquisa Geral
   async search(req, res) {
-    // Apanhamos o que o utilizador digitou na barra de pesquisa (?q=artista)
     const { q } = req.query;
 
     if (!q) {
@@ -10,14 +10,24 @@ module.exports = {
     }
 
     try {
-      // Pedimos ao motor do Spotify para fazer a magia
       const albums = await searchAlbums(q);
-      
-      // Devolvemos a lista limpa para o Front-end
       return res.json(albums);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Erro interno ao comunicar com o Spotify.' });
+    }
+  },
+
+  // 2. Busca Detalhes de UM Álbum (com as músicas)
+  async getAlbum(req, res) {
+    const { id_spotify } = req.params;
+
+    try {
+      const albumFullData = await getAlbumDetails(id_spotify);
+      return res.json(albumFullData);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Erro ao buscar detalhes do álbum no Spotify.' });
     }
   }
 };

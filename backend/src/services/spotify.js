@@ -60,4 +60,19 @@ async function searchAlbums(query) {
   }
 }
 
-module.exports = { searchAlbums };
+async function getAlbumDetails(id_spotify) {
+  const token = await getSpotifyToken();
+  
+  const response = await axios.get(`https://api.spotify.com/v1/albums/${id_spotify}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.data;
+}
+
+module.exports = {
+  searchAlbums,
+  getAlbumDetails
+};
