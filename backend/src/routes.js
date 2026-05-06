@@ -5,6 +5,7 @@ const SpotifyController = require('./controllers/SpotifyController');
 const AlbumController = require('./controllers/AlbumController');
 const ForgotPasswordController = require('./controllers/ForgotPasswordController');
 const ResetPasswordController = require('./controllers/ResetPasswordController');
+const ReviewController = require('./controllers/ReviewController');
 
 const routes = express.Router();
 
@@ -17,6 +18,7 @@ routes.post('/forgot-password', ForgotPasswordController.recover);
 routes.post('/reset-password', ResetPasswordController.reset);
 routes.get('/api/search', SpotifyController.search);
 routes.get('/api/spotify/albums/:id_spotify', SpotifyController.getAlbum);
+routes.get('/reviews', ReviewController.index);
 
 // ==========================
 // Rotas Privadas (authMiddleware)
@@ -24,5 +26,7 @@ routes.get('/api/spotify/albums/:id_spotify', SpotifyController.getAlbum);
 routes.post('/albums', authMiddleware, AlbumController.create);
 routes.get('/albums', authMiddleware, AlbumController.index);  
 routes.delete('/albums/:id_spotify', authMiddleware, AlbumController.remove);
+routes.post('/reviews', authMiddleware, ReviewController.createOrUpdate);
+
 
 module.exports = routes;
