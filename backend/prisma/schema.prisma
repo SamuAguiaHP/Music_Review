@@ -15,21 +15,29 @@ model User {
   role       String   @default("STANDARD") // Pode ser "STANDARD" ou "ADMIN"
   created_at DateTime @default(now())
   
+  albums    Album[]
   reviews    Review[] // Relacionamento: Um usuário pode ter várias avaliações
 }
 
 // 2. Tabela de Álbuns
 model Album {
   id           String   @id @default(uuid())
-  id_spotify String   @unique
+  id_spotify   String  
   title        String
   artist       String
   release_year Int?
   cover_url    String? 
   created_at   DateTime @default(now())
 
+  // Relacionamento com o Usuário
+  userId       String   // ID do dono do álbum
+  user         User     @relation(fields: [userId], references: [id])
+
   tracks       Track[]  // Um álbum tem várias músicas
   reviews      Review[] // Um álbum pode receber várias avaliações
+
+  @@unique([id_spotify, userId]) 
+  @@map("albums")
 }
 
 // 3. Tabela de Músicas

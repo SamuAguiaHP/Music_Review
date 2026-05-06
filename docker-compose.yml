@@ -20,7 +20,6 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # Note que usamos 'db' no lugar de 'localhost' aqui
       DATABASE_URL: "postgresql://user:password@db:5432/music_review_db?schema=public"
     depends_on:
       - db

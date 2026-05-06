@@ -1,25 +1,44 @@
-import React from 'react';
-import api from '../services/api'; // NOVO: Importamos o Axios configurado
+import React, { useState } from 'react';
+import api from '../services/api';
 
-function AlbumCard({ album }) {
+// 1. Recebemos a função onRemove do pai (Home)
+function AlbumCard({ album, isLibrary = false, onRemove }) {
   
-  // Função que é chamada ao clicar no botão "+"
-  const handleSaveAlbum = async () => {
-    try {
-      // Enviamos para o nosso backend os dados do álbum que veio do Spotify
-      await api.post('/albums', {
-        id_spotify: album.id_spotify,
-        title: album.title,
-        artist: album.artist,
-        cover_url: album.cover_url
-      });
+  const [isSaved, setIsSaved] = useState(isLibrary);
 
-      // Feedback de sucesso para o usuário
-      alert(`Álbum "${album.title}" salvo com sucesso no banco de dados!`);
-      
+  const handleToggleAlbum = async () => {
+    try {
+      if (isSaved) {
+        // REMOVER
+        await api.delete(`/albums/${album.id_spotify}`);
+        setIsSaved(false); 
+        alert(`Álbum "${album.title}" removido da sua biblioteca!`);
+        
+        // 2. SE ESTIVERMOS NA BIBLIOTECA, MANDAMOS A HOME SUMIR COM ELE DA TELA!
+        if (isLibrary && onRemove) {
+          onRemove(album.id_spotify);
+        }
+
+      } else {
+        // ADICIONAR
+        await api.post('/albums', {
+          id_spotify: album.id_spotify,
+          title: album.title,
+          artist: album.artist,
+          cover_url: album.cover_url
+        });
+        setIsSaved(true);
+        alert(`Álbum "${album.title}" salvo com sucesso no banco de dados!`);
+      }
     } catch (error) {
-      console.error(error);
-      alert('Erro ao salvar o álbum. Tente novamente.');
+      // 3. CAPTURAMOS O ERRO 409 (JÁ EXISTE) AQUI!
+      if (error.response && error.response.status === 409) {
+        alert('Este álbum já existe na sua biblioteca!');
+        setIsSaved(true); // Se já existe, forçamos o botão a virar '-'
+      } else {
+        console.error(error);
+        alert('Erro ao processar a ação. Tente novamente.');
+      }
     }
   };
 
@@ -32,7 +51,6 @@ function AlbumCard({ album }) {
       cursor: 'pointer',
       height: '100%'
     },
-    // ... Mantenha o restante dos seus styles (imageContainer, albumImage, badge)
   };
 
   return (
@@ -64,8 +82,15 @@ function AlbumCard({ album }) {
           <span className="badge rounded-pill" style={{ background: 'rgba(168, 85, 247, 0.2)', color: '#a855f7', border: '1px solid rgba(168, 85, 247, 0.5)' }}>
             ⭐ {album.rating || 'Novo'}
           </span>
-          <button className="btn btn-link p-0" style={{ color: '#a855f7' }} onClick={handleSaveAlbum}>
-            <i className="bi bi-plus-circle-fill fs-5"></i>
+          
+          {/* 3. O botão agora muda de cor e de ícone dependendo do estado! */}
+          <button 
+            className="btn btn-link p-0" 
+            style={{ color: isSaved ? '#ef4444' : '#a855f7' }} // Vermelho (remover) ou Roxo (salvar)
+            onClick={handleToggleAlbum}
+            title={isSaved ? "Remover da Biblioteca" : "Salvar na Biblioteca"}
+          >
+            <i className={isSaved ? "bi bi-dash-circle-fill fs-5" : "bi bi-plus-circle-fill fs-5"}></i>
           </button>
         </div>
       </div>

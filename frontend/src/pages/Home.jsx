@@ -32,6 +32,9 @@ function Home() {
     }
     loadAlbums();
   }, [query]); // O React vai rodar isso de novo toda vez que a URL mudar!
+  const handleRemoveAlbum = (id_spotify) => {
+    setAlbums(prevAlbums => prevAlbums.filter(album => album.id_spotify !== id_spotify));
+  };
 
   return (
     <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white' }}>
@@ -60,7 +63,11 @@ function Home() {
             {albums.length > 0 ? (
               albums.map((album) => (
                 <div className="col-12 col-sm-6 col-md-4 col-xl-3" key={album.id_spotify || album.id}>
-                  <AlbumCard album={album} />
+                  <AlbumCard 
+                    album={album} 
+                    isLibrary={!query} 
+                    onRemove={handleRemoveAlbum}
+                  />
                 </div>
               ))
             ) : (
