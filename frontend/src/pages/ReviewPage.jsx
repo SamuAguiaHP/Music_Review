@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Header from '../components/Header';
@@ -14,25 +14,30 @@ function ReviewPage() {
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const loadData = useCallback(async () => {
-    try {
-      // 1. Busca detalhes do álbum para exibir a capa/título
-      const albumRes = await api.get(`/api/spotify/albums/${id}`);
-      setAlbum(albumRes.data);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // 1. Busca detalhes do álbum para exibir a capa/título
+        const albumRes = await api.get(`/api/spotify/albums/${id}`);
+        setAlbum(albumRes.data);
 
-      // 2. Busca as avaliações
-      const reviewsRes = await api.get(`/reviews?album_id=${id}`);
-      setReviews(reviewsRes.data.reviews || []);
-      setAverage(reviewsRes.data.average || 0);
-    } catch (err) {
-      console.error("Erro ao carregar dados:", err);
-    } finally {
-      setLoading(false);
-    }
+        // 2. Busca as avaliações
+        const reviewsRes = await api.get(`/reviews?album_id=${id}`);
+        setReviews(reviewsRes.data.reviews || []);
+        setAverage(reviewsRes.data.average || 0);
+      } catch (err) {
+        console.error("Erro ao carregar dados:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await api.post('/reviews', {
         rating,
@@ -40,15 +45,18 @@ function ReviewPage() {
         album_id: id
       });
       setComment('');
-      loadData();
       alert("Avaliação enviada!");
     } catch (err) {
       console.error(err);
       alert("Erro ao enviar avaliação.");
-    }
+    } finally {
+    setLoading(false);
+  }
   };
 
-  if (loading) return <div className="text-white p-5">Carregando...</div>;
+  if (loading) {
+    return <div className="text-white p-5 text-center">Carregando dados do álbum...</div>;
+  }
 
   return (
     <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white' }}>
@@ -128,8 +136,8 @@ function ReviewPage() {
                       ))}
                     </div>
                   </div>
-                  <p className="mb-1">{rev.comment}</p>
-                  <small className="text-muted">{new Date(rev.created_at).toLocaleDateString()}</small>
+                  <p className="mb-1" style={{ color: '#a855f7' }}>{rev.comment}</p>
+                  <small className="text-muted ">{new Date(rev.created_at).toLocaleDateString()}</small>
                 </div>
               ))
             )}

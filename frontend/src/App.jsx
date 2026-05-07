@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import AlbumDetails from './pages/AlbumDetails';
+import ReviewPage from './pages/ReviewPage';
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/album/:id" element={<AlbumDetails />} />
+        <Route path="/review/:id" element={<ReviewPage />} />
       </Routes>
     </Router>
   );

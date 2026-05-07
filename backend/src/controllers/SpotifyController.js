@@ -21,7 +21,6 @@ module.exports = {
   // 2. Busca Detalhes de UM Álbum (com as músicas)
   async getAlbum(req, res) {
     const { id_spotify } = req.params;
-
     try {
       const albumFullData = await getAlbumDetails(id_spotify);
       return res.json(albumFullData);

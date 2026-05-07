@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import ReviewPage from '../pages/ReviewPage';
 
 // 1. Recebemos a função onRemove do pai (Home)
 function AlbumCard({ album, isLibrary = false, onRemove }) {
@@ -101,11 +102,21 @@ function AlbumCard({ album, isLibrary = false, onRemove }) {
         <p className="card-text text-secondary small mb-3">{album.artist}</p>
         
         <div className="d-flex justify-content-between align-items-center mt-auto">
-          <span className="badge rounded-pill" style={{ background: 'rgba(168, 85, 247, 0.2)', color: '#a855f7', border: '1px solid rgba(168, 85, 247, 0.5)' }}>
-            ⭐ {album.rating || 'Novo'}
-          </span>
-          
-          {/* 3. O botão agora muda de cor e de ícone dependendo do estado! */}
+          {/* Dentro do seu card, onde ficam os botões */}
+          <div className="d-flex align-items-center gap-3">
+            {/* Botão de Estrela para Review */}
+            <button 
+              className="btn btn-link p-0 text-warning" 
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation(); 
+                navigate(`/review/${album.id_spotify || album.id}`);
+              }}
+              title="Avaliar Álbum"
+            >
+              <i className="bi bi-star-fill" style={{ fontSize: '1.2rem' }}></i>
+            </button>
+          </div>
           <button 
             className="btn btn-link p-0" 
             style={{ color: isSaved ? '#ef4444' : '#a855f7' }}
