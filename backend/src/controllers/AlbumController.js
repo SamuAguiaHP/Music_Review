@@ -45,8 +45,8 @@ module.exports = {
           title: track.title,
           track_number: track.track_number || 1,
           duration: track.duration || 0,
-          album_id: album.id, // <-- Conecta a música ao álbum recém-criado
-          userId: userId      // <-- Conecta a música ao dono da biblioteca
+          album_id: album.id,
+          userId: userId
         }));
 
         // Inserção em massa! O skipDuplicates impede o banco de crashar 
@@ -77,12 +77,28 @@ module.exports = {
         where: {
           userId: userId 
         },
+        include: {
+        reviews: true, // Inclui as reviews para calcular a média
+      },
         orderBy: {
           created_at: 'desc' // Mostra os adicionados mais recentemente primeiro
         }
       });
 
-      return res.status(200).json(albums);
+      const albumsWithAverage = albums.map(album => {
+      const total = album.reviews.length;
+      const sum = album.reviews.reduce((acc, r) => acc + r.rating, 0);
+      const avg = total > 0 ? (sum / total) : 0;
+
+      console.log(`Calculando média para ${album.title}: ${avg}`); // Add este log no back para testar
+
+      return {
+        ...album, 
+        average: avg 
+      };
+    });
+
+      return res.status(200).json(albumsWithAverage);
     } catch (error) {
       console.error("Erro ao listar álbuns:", error);
       return res.status(500).json({ error: "Erro ao buscar a sua biblioteca de álbuns." });

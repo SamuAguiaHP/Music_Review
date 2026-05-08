@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import ReviewPage from '../pages/ReviewPage';
 
 // 1. Recebemos a função onRemove do pai (Home)
 function AlbumCard({ album, isLibrary = false, onRemove }) {
+  console.log("Dados do álbum no Card:", album);  
   
   const [isSaved, setIsSaved] = useState(isLibrary);
   const navigate = useNavigate();
@@ -64,6 +64,21 @@ function AlbumCard({ album, isLibrary = false, onRemove }) {
     }
   };
 
+  const handleReviewClick = (e) => {
+  // IMPEDIR PROPAGAÇÃO: Evita que o clique abra os detalhes do álbum
+  e.stopPropagation(); 
+  const idParaReview = album.id_spotify || album.id;
+  navigate(`/review/${idParaReview}`);
+};
+
+// Lógica da nota: Se não houver média ou for 0, exibe "Novo"
+const renderRating = () => {
+  if (album.average > 0) {
+    return `${Number(album.average).toFixed(1)} ★`;
+  }
+  return "Novo";
+};
+
   const styles = {
     card: {
       backgroundColor: '#1e1e1e',
@@ -102,21 +117,22 @@ function AlbumCard({ album, isLibrary = false, onRemove }) {
         <p className="card-text text-secondary small mb-3">{album.artist}</p>
         
         <div className="d-flex justify-content-between align-items-center mt-auto">
-          {/* Dentro do seu card, onde ficam os botões */}
-          <div className="d-flex align-items-center gap-3">
-            {/* Botão de Estrela para Review */}
-            <button 
-              className="btn btn-link p-0 text-warning" 
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation(); 
-                navigate(`/review/${album.id_spotify || album.id}`);
-              }}
-              title="Avaliar Álbum"
-            >
-              <i className="bi bi-star-fill" style={{ fontSize: '1.2rem' }}></i>
-            </button>
-          </div>
+          <button 
+            className="btn btn-sm btn-outline-warning mt-2 d-flex align-items-center justify-content-center gap-1"
+            onClick={handleReviewClick}
+            style={{ 
+              borderRadius: '12px', 
+              fontSize: '0.75rem', 
+              fontWeight: 'bold',
+              padding: '2px 8px',   
+              width: 'fit-content'  
+            }}
+          >
+            <i className="bi bi-star-fill" style={{ fontSize: '0.7rem' }}></i>
+            {renderRating()}
+          </button>
+          
+          {/* 3. O botão agora muda de cor e de ícone dependendo do estado! */}
           <button 
             className="btn btn-link p-0" 
             style={{ color: isSaved ? '#ef4444' : '#a855f7' }}

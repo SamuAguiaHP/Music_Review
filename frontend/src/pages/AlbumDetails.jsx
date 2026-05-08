@@ -62,7 +62,7 @@ function AlbumDetails() {
                 <span className="text-uppercase fw-bold" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>Álbum</span>
                 <h1 className="display-3 fw-bold mb-3" style={{ lineHeight: '1.2' }}>{album.name}</h1>
                 <div className="d-flex align-items-center">
-                  <span className="fw-bold">{album.artists?.[0]?.name}</span>
+                  <span className="fw-bold">{album.artists.map(a => a.name).join(', ')}</span>
                   <span className="mx-2">•</span>
                   <span className="text-secondary">{album.release_date?.substring(0, 4)}</span>
                   <span className="mx-2">•</span>

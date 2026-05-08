@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api'; // Importa a nossa config
+import api from '../services/api';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -15,9 +15,8 @@ function Login() {
 
    try {
       const response = await api.post('/login', { email, password });
-      const { token, user } = response.data; // Assumindo que o seu back-end devolve o token aqui
+      const { token, user } = response.data;
 
-      // A MÁGICA ACONTECE AQUI:
       const storage = rememberMe ? localStorage : sessionStorage;
 
       // Limpa os dois para evitar conflitos de logins antigos
@@ -29,7 +28,6 @@ function Login() {
       
       navigate('/'); // Vai para a Home
     } catch (err) {
-      // Se o backend devolver erro (401, 500, etc)
       setError(err.response?.data?.error || 'Erro ao ligar ao servidor');
     }
   };
@@ -69,7 +67,7 @@ function Login() {
                    maxWidth: '420px', 
                    backgroundColor: 'rgba(0, 0, 0, 0.25)', 
                    backdropFilter: 'blur(12px)',
-                   WebkitBackdropFilter: 'blur(12px)', /* Suporte para Safari */
+                   WebkitBackdropFilter: 'blur(12px)',
                    borderRadius: '24px'
                  }}>
               
@@ -117,10 +115,10 @@ function Login() {
                 className="form-check-input" 
                 type="checkbox" 
                 id="rememberMe" 
-                checked={rememberMe} // Liga a caixa à variável
+                checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)} // Atualiza quando clica
               />
-              <label className="form-check-label text-secondary small" htmlFor="rememberMe">
+              <label className="form-check-label text-secondary small d-flex" htmlFor="rememberMe">
                 Lembrar de mim
               </label>
             </div>

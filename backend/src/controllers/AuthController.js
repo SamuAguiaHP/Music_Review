@@ -18,10 +18,8 @@ module.exports = {
         return res.status(400).json({ error: 'Este e-mail já está cadastrado.' });
       }
 
-      // Criptografa a senha (o '10' é o "custo" do hash, padrão seguro da indústria)
+      // Criptografa a senha antes de salvar no banco
       const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Salva no banco de dados
       const user = await prisma.user.create({
         data: {
           name,
@@ -30,7 +28,7 @@ module.exports = {
         },
       });
 
-      // Retorna o usuário criado, mas deleta a senha do objeto de resposta por segurança!
+      // Retorna o usuário criado, mas deleta a senha do objeto de resposta por segurança
       delete user.password;
       return res.status(201).json(user);
 
@@ -58,11 +56,11 @@ module.exports = {
         return res.status(401).json({ error: 'E-mail ou senha incorretos.' });
       }
 
-      // Se tudo estiver certo, gera o Token JWT
+      // Gera o Token JWT
       const token = jwt.sign(
         { id: user.id, role: user.role }, // Dados que vão dentro do token (Payload)
         JWT_SECRET,
-        { expiresIn: '1h' } // O token expira em 1 hora
+        { expiresIn: '1h' }
       );
 
       // Retorna o token e os dados básicos do usuário

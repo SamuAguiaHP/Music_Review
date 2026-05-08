@@ -39,16 +39,15 @@ async function searchAlbums(query) {
         type: 'album'
       }
     });
-
-    // O Spotify devolve 20 álbuns por padrão. Vamos pegar apenas os 12 primeiros (slice)
-    const albums = response.data.albums.items.slice(0, 12);
+    
+    const albums = response.data.albums.items;
 
     // Filtra e devolve os dados de forma limpa para o Front-end
     return albums.map(album => ({
       id_spotify: album.id,
       title: album.name,
       // Usamos o '?' para evitar erros caso um álbum não tenha artista ou imagem cadastrada
-      artist: album.artists[0]?.name || 'Artista Desconhecido',
+      artist: album.artists.map(a => a.name).join(', ') || 'Artista Desconhecido',
       cover_url: album.images[0]?.url || 'https://via.placeholder.com/300', 
       release_date: album.release_date,
       spotify_url: album.external_urls.spotify

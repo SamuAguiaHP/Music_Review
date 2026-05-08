@@ -1,5 +1,5 @@
 const prisma = require('../prisma');
-const bcrypt = require('bcryptjs'); // Precisamos criptografar a nova senha!
+const bcrypt = require('bcryptjs');
 
 module.exports = {
   async reset(req, res) {
@@ -19,7 +19,7 @@ module.exports = {
         return res.status(404).json({ error: 'Conta não encontrada.' });
       }
 
-      // 2. Criptografa a nova senha com padrão de mercado
+      // 2. Criptografa a nova senha
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       // 3. Atualiza o banco de dados
