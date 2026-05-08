@@ -115,5 +115,5 @@ Acesse a aplicação no navegador através de: `http://localhost:5173`
 
 ## 👨‍💻 Autor
 **Samuel**  
-Estudante de Ciência da Computação / Sistemas de Informação - **UFLA**  
+Estudante de Ciência da Computação - **UFLA**  
 Trainee Comp Júnior 2026
