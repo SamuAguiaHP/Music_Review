@@ -1,17 +1,34 @@
-const { searchAlbums, getAlbumDetails } = require('../services/spotify');
+const spotifyService = require('../services/spotify');
 
 module.exports = {
   // 1. Pesquisa Geral
   async search(req, res) {
-    const { q } = req.query;
+    const searchTerm = req.query.q || req.query.query;
 
-    if (!q) {
-      return res.status(400).json({ error: 'É obrigatório enviar um termo de pesquisa (q).' });
+    if (!searchTerm) {
+      return res.status(400).json({ error: 'É obrigatório enviar um termo de pesquisa (query).' });
     }
 
     try {
-      const albums = await searchAlbums(q);
-      return res.json(albums);
+      const data = await spotifyService.searchItems(searchTerm);
+
+      const albumsRaw = data.albums?.items || [];
+      const tracksRaw = data.tracks?.items || [];
+
+      const albums = albumsRaw.map(album => ({
+        ...album,
+        type: 'album'
+      }));
+
+      const tracks = tracksRaw.map(track => ({
+        ...track,
+        type: 'track',
+        images: track.album?.images 
+      }));
+      
+      const mixedResults = [...albums, ...tracks];
+     
+      return res.json(mixedResults);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Erro interno ao comunicar com o Spotify.' });
@@ -22,11 +39,27 @@ module.exports = {
   async getAlbum(req, res) {
     const { id_spotify } = req.params;
     try {
-      const albumFullData = await getAlbumDetails(id_spotify);
+      const albumFullData = await spotifyService.getAlbumDetails(id_spotify);
       return res.json(albumFullData);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Erro ao buscar detalhes do álbum no Spotify.' });
     }
+  },
+
+async getTrack(req, res) {
+  const { id_spotify } = req.params;
+
+  if (!id_spotify || id_spotify === 'undefined') {
+      return res.status(400).json({ error: 'O ID da música não foi recebido.' });
+    }
+
+  try {
+    const track = await spotifyService.getTrackDetails(id_spotify);
+    return res.json(track);
+  } catch (error) {
+    console.error("Erro ao buscar detalhes da música:", error);
+    return res.status(500).json({ error: 'Erro ao buscar detalhes da música no Spotify.' });
   }
+}
 };

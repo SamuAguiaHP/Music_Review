@@ -9,52 +9,73 @@ function AlbumCard({ album, isLibrary = false, onRemove }) {
   const navigate = useNavigate();
   const spotifyId = album.id_spotify || album.id;
 
-  // --- LÓGICA DE DIFERENCIAÇÃO ---
-  // O Spotify retorna 'track' ou 'album'. Se for do banco e não tiver, assumimos 'album'.
-  const isTrack = album.type === 'track' || album.album_type === 'single';
-  const typeLabel = isTrack ? 'Música' : 'Álbum';
-  const badgeColor = isTrack ? '#0dcaf0' : '#a855f7'; // Ciano para música, Roxo para álbum
-  const typeIcon = isTrack ? 'bi-music-note-beamed' : 'bi-disc';
+  const isVisualTrack = album.type === 'track' || album.album_type === 'single';
+  const typeLabel = isVisualTrack ? 'Música' : 'Álbum';
+  const badgeColor = isVisualTrack ? '#0dcaf0' : '#a855f7'; // Azul para música, Roxo para álbum
+  const typeIcon = isVisualTrack ? 'bi-music-note-beamed' : 'bi-disc';
 
-  const handleToggleAlbum = async (e) => {
-    e.stopPropagation();
-    try {
-      if (isSaved) {
-        await api.delete(`/albums/${album.id_spotify}`);
-        setIsSaved(false); 
-        if (isLibrary && onRemove) {
-          onRemove(album.id_spotify);
-        }
+  const apiRouteType = album.type === 'track' ? 'tracks' : 'albums';
+const handleToggleAlbum = async (e) => {
+  e.stopPropagation();
+  try {
+    if (isSaved) {
+      // Usa o spotifyId para garantir que sempre tem ID
+      await api.delete(`/albums/${spotifyId}`);
+      setIsSaved(false); 
+      if (isLibrary && onRemove) {
+        onRemove(spotifyId);
+      }
+    } else {
+      let formattedTracks = [];
+
+      // Se for música, busca na rota de músicas!
+      if (apiRouteType === 'tracks') {
+        const spotifyResponse = await api.get(`/api/spotify/tracks/${spotifyId}`);
+        const trackData = spotifyResponse.data;
+
+        // Uma música única equivale a uma "lista" de 1 faixa para o nosso banco
+        formattedTracks = [{
+          id_spotify: trackData.id,
+          title: trackData.name,
+          track_number: trackData.track_number || 1,
+          duration: trackData.duration_ms || 0,
+        }];
       } else {
-        const spotifyResponse = await api.get(`/api/spotify/albums/${album.id_spotify}`);
+        // Se for álbum, busca na rota de álbuns
+        const spotifyResponse = await api.get(`/api/spotify/albums/${spotifyId}`);
         const fullAlbumData = spotifyResponse.data;
         const rawTracks = fullAlbumData.tracks?.items || [];
 
-        const formattedTracks = rawTracks.map(track => ({
+        formattedTracks = rawTracks.map(track => ({
           id_spotify: track.id,
           title: track.name,
           track_number: track.track_number || 1,
           duration: track.duration_ms || 0,
         }));
+      }
 
-        await api.post('/albums', {
-          id_spotify: album.id_spotify,
-          title: album.title,
-          artist: album.artist, 
-          cover_url: album.cover_url,
-          tracks: formattedTracks 
-        });
-        
-        setIsSaved(true);
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        setIsSaved(true);
-      } else {
-        console.error(error);
-      }
+      // Se veio do Spotify, ele usa 'name' e 'artists[0].name'
+      const payload = {
+        id_spotify: spotifyId,
+        title: album.title || album.name || 'Título Desconhecido',
+        artist: album.artist || (album.artists && album.artists.length > 0 ? album.artists[0].name : 'Artista Desconhecido'), 
+        cover_url: album.cover_url || (album.images && album.images.length > 0 ? album.images[0].url : 'https://via.placeholder.com/300'),
+        tracks: formattedTracks 
+      };
+
+      // 3. Salva no banco!
+      await api.post('/albums', payload);
+      
+      setIsSaved(true);
     }
-  };
+  } catch (error) {
+    if (error.response && error.response.status === 409) {
+      setIsSaved(true);
+    } else {
+      console.error("Erro ao salvar:", error);
+    }
+  }
+};
 
   const handleReviewClick = (e) => {
     e.stopPropagation(); 

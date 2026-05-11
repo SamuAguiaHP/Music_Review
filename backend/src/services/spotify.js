@@ -26,52 +26,49 @@ async function getSpotifyToken() {
 }
 
 // 2. Função para pesquisar álbuns
-async function searchAlbums(query) {
-  try {
-    const token = await getSpotifyToken();
-    const searchUrl = 'https://api.spotify.com/v1/search';
-    const response = await axios.get(searchUrl, {
-      headers: { 
-        Authorization: `Bearer ${token}` 
-      },
-      params: { 
-        q: query, 
-        type: 'album'
-      }
-    });
-    
-    const albums = response.data.albums.items;
-
-    // Filtra e devolve os dados de forma limpa para o Front-end
-    return albums.map(album => ({
-      id_spotify: album.id,
-      title: album.name,
-      // Usamos o '?' para evitar erros caso um álbum não tenha artista ou imagem cadastrada
-      artist: album.artists.map(a => a.name).join(', ') || 'Artista Desconhecido',
-      cover_url: album.images[0]?.url || 'https://via.placeholder.com/300', 
-      release_date: album.release_date,
-      spotify_url: album.external_urls.spotify
-    }));
-
-  } catch (error) {
-    console.error("Erro ao buscar álbuns:", error.response?.data || error.message);
-    throw new Error("Falha ao buscar dados no Spotify");
-  }
-}
-
-async function getAlbumDetails(id_spotify) {
-  const token = await getSpotifyToken();
+async function searchItems(query) {
+  const token = await getSpotifyToken(); 
   
-  const response = await axios.get(`https://api.spotify.com/v1/albums/${id_spotify}`, {
+  const response = await axios.get('https://api.spotify.com/v1/search', {
     headers: {
-      Authorization: `Bearer ${token}`
+      'Authorization': `Bearer ${token}`
+    },
+    params: {
+      q: query,
+      type: 'album,track',
+      limit: 10 
     }
   });
 
   return response.data;
 }
 
+async function getTrackDetails(trackId) {
+  const token = await getSpotifyToken(); 
+
+  const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response.data;
+}
+
+// Aproveite para garantir que a de álbuns também tem o ID!
+async function getAlbumDetails(albumId) {
+  const token = await getSpotifyToken();
+
+  const response = await axios.get(`https://api.spotify.com/v1/albums/${albumId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response.data;
+}
 module.exports = {
-  searchAlbums,
+  searchItems,
+  getTrackDetails,
   getAlbumDetails
 };
