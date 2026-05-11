@@ -64,46 +64,45 @@ module.exports = {
     }
   },
 
-  async index(req, res) {
-    // Pegamos novamente o ID do usuário que o middleware descobriu
-    const userId = req.userId || (req.user && req.user.id) || req.usuarioId;
+  // backend/src/controllers/AlbumController.js
 
-    if (!userId) {
-      return res.status(401).json({ error: "Não foi possível identificar o usuário." });
-    }
+async index(req, res) {
+  const user_id = req.userId || req.usuarioId;
 
-    try {
-      const albums = await prisma.album.findMany({
+  try {
+    // 1. Buscamos os álbuns do utilizador logado
+    const userAlbums = await prisma.album.findMany({
+      where: { userId: user_id },
+      orderBy: { created_at: 'desc' }
+    });
+
+    // 2. Para cada álbum, calculamos a média global
+    const albumsWithAverage = await Promise.all(userAlbums.map(async (album) => {
+      
+      // Buscamos todas as reviews que mencionam o ID do Spotify deste álbum
+      const allReviews = await prisma.review.findMany({
         where: {
-          userId: userId 
-        },
-        include: {
-        reviews: true, // Inclui as reviews para calcular a média
-      },
-        orderBy: {
-          created_at: 'desc' // Mostra os adicionados mais recentemente primeiro
+          album: {
+            id_spotify: album.id_spotify
+          }
         }
       });
 
-      const albumsWithAverage = albums.map(album => {
-      const total = album.reviews.length;
-      const sum = album.reviews.reduce((acc, r) => acc + r.rating, 0);
-      const avg = total > 0 ? (sum / total) : 0;
-
-      console.log(`Calculando média para ${album.title}: ${avg}`); // Add este log no back para testar
+      const total = allReviews.length;
+      const avg = total > 0 ? allReviews.reduce((acc, r) => acc + r.rating, 0) / total : 0;
 
       return {
-        ...album, 
-        average: avg 
+        ...album,
+        average: avg
       };
-    });
+    }));
 
-      return res.status(200).json(albumsWithAverage);
-    } catch (error) {
-      console.error("Erro ao listar álbuns:", error);
-      return res.status(500).json({ error: "Erro ao buscar a sua biblioteca de álbuns." });
-    }
-  },
+    return res.json(albumsWithAverage);
+  } catch (error) {
+    console.error("Erro ao listar álbuns com média:", error);
+    return res.status(500).json({ error: "Erro interno ao processar biblioteca." });
+  }
+},
 
   async remove(req, res) {
     const userId = req.userId || (req.user && req.user.id) || req.usuarioId;
