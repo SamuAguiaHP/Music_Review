@@ -107,8 +107,8 @@ Acesse a aplicação no navegador através de: `http://localhost:5173`
 - [x] Desenvolvimento do **Front-end** em React + Vite.
 - [x] Implementação de Autenticação completa (JWT + Recuperação de Senha).
 - [x] Criação da **Biblioteca Privada** (Salvar/Remover Álbuns com relação de usuários).
-- [ ] **Diferenciação de Álbuns e Músicas** no Front-end e Back-end.
-- [ ] Desenvolvimento do **CRUD de Reviews** (Dar notas e comentar os itens salvos).
+- [x] **Diferenciação de Álbuns e Músicas** no Front-end e Back-end.
+- [x] Desenvolvimento do **CRUD de Reviews** (Dar notas e comentar os itens salvos).
 - [ ] Implementação de Testes Automatizados (Jest/SuperTest).
 
 ---
