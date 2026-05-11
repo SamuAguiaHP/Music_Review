@@ -7,9 +7,21 @@ import AlbumCard from '../components/AlbumCard';
 
 function Home() {
   const [albums, setAlbums] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const isSearching = searchQuery.trim().length > 0;
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q'); 
+
+  const loadLibrary = async () => {
+  try {
+    const response = await api.get('/albums');
+    setAlbums(response.data);
+    setSearchQuery('');
+  } catch (error) {
+    console.error("Erro ao carregar biblioteca:", error);
+  }
+};
 
   useEffect(() => {
     async function loadAlbums() {
@@ -62,6 +74,13 @@ function Home() {
           <div className="row g-4">
             {albums.length > 0 ? (
               albums.map((album) => (
+                <AlbumCard 
+                  key={album.id_spotify} 
+                  album={album} 
+                  isLibrary={!isSearching}
+                  onRemove={loadLibrary}
+                  onSaveSuccess={loadLibrary}
+                />,
                 <div className="col-12 col-sm-6 col-md-4 col-xl-3" key={album.id_spotify || album.id}>
                   <AlbumCard 
                     album={album} 

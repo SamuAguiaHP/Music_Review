@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
-function AlbumCard({ album, isLibrary = false, onRemove }) {
+function AlbumCard({ album, isLibrary = false, onRemove, onSaveSuccess}) {
   console.log("Dados do álbum no Card:", album);  
   
   const [isSaved, setIsSaved] = useState(isLibrary);
@@ -60,6 +60,7 @@ const handleToggleAlbum = async (e) => {
         title: album.title || album.name || 'Título Desconhecido',
         artist: album.artist || (album.artists && album.artists.length > 0 ? album.artists[0].name : 'Artista Desconhecido'), 
         cover_url: album.cover_url || (album.images && album.images.length > 0 ? album.images[0].url : 'https://via.placeholder.com/300'),
+        type: isVisualTrack ? 'track' : 'album',
         tracks: formattedTracks 
       };
 
@@ -67,6 +68,12 @@ const handleToggleAlbum = async (e) => {
       await api.post('/albums', payload);
       
       setIsSaved(true);
+
+      if (onSaveSuccess) {
+          onSaveSuccess(); 
+        }
+        
+        alert(`"${payload.title}" adicionado à sua biblioteca!`);
     }
   } catch (error) {
     if (error.response && error.response.status === 409) {

@@ -2,8 +2,7 @@ const prisma = require('../prisma'); // Puxa a nossa conexão otimizada com o ba
 
 module.exports = {
   async create(req, res) {
-    // 1. Agora recebemos também o array de 'tracks' que virá do Front-end
-    const { id_spotify, title, artist, cover_url, release_date, tracks } = req.body;
+    const { id_spotify, title, artist, cover_url, release_date, type, tracks } = req.body;
     const userId = req.userId || (req.user && req.user.id) || req.usuarioId; 
     
     if (!userId) {
@@ -24,19 +23,20 @@ module.exports = {
         return res.status(409).json({ error: "Este álbum já existe na sua biblioteca." });
       }
 
-      // 2. Cria o Álbum no banco
+      // Cria o Álbum no banco
       album = await prisma.album.create({
         data: {
           id_spotify,
           title,
           artist,
           cover_url,
+          type: type || 'album',
           userId,
           release_year: release_date ? parseInt(release_date.substring(0, 4)) : null
         }
       });
 
-      // 3. A MÁGICA DAS MÚSICAS: Se o Front-end mandou as músicas, salvamos todas!
+      // Se o Front-end mandou as músicas, salvamos todas!
       if (tracks && Array.isArray(tracks) && tracks.length > 0) {
         
         // Preparamos o pacote de dados para cada música

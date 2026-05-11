@@ -29,6 +29,7 @@ model Album {
   release_year Int?
   cover_url    String? 
   created_at   DateTime @default(now())
+  type        String   @default("album")
 
   // Relacionamento com o Usuário
   userId       String   // ID do dono do álbum
