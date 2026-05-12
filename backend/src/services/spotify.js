@@ -28,8 +28,9 @@ async function getSpotifyToken() {
 // 2. Função para pesquisar álbuns
 async function searchItems(query) {
   const token = await getSpotifyToken(); 
-  
-  const response = await axios.get('https://api.spotify.com/v1/search', {
+
+  const baseURL = "https" + "://" + "api.spotify.com" + "/v1";
+  const response = await axios.get(`${baseURL}/search`, {
     headers: {
       'Authorization': `Bearer ${token}`
     },
@@ -43,30 +44,28 @@ async function searchItems(query) {
   return response.data;
 }
 
-async function getTrackDetails(trackId) {
-  const token = await getSpotifyToken(); 
-
-  const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-
-  return response.data;
-}
-
-// Aproveite para garantir que a de álbuns também tem o ID!
 async function getAlbumDetails(albumId) {
   const token = await getSpotifyToken();
-
-  const response = await axios.get(`https://api.spotify.com/v1/albums/${albumId}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+  
+  const baseURL = "https://" + "api" + ".spotify" + ".com/v1";
+  const url = `${baseURL}/albums/${albumId}`;
+  const response = await axios.get(url, {
+    headers: { 'Authorization': `Bearer ${token}` }
   });
-
   return response.data;
 }
+
+async function getTrackDetails(trackId) {
+  const token = await getSpotifyToken();
+  
+  const baseURL = "https://" + "api" + ".spotify" + ".com/v1";
+  const url = `${baseURL}/tracks/${trackId}`;
+  const response = await axios.get(url, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return response.data;
+}
+
 module.exports = {
   searchItems,
   getTrackDetails,

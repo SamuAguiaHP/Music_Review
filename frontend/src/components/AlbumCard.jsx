@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
-function AlbumCard({ album, isLibrary = false, onRemove, onSaveSuccess}) {
-  console.log("Dados do álbum no Card:", album);  
-  
+function AlbumCard({ album, isLibrary = false, onRemove, onSaveSuccess}) {  
   const [isSaved, setIsSaved] = useState(isLibrary);
   const navigate = useNavigate();
   const spotifyId = album.id_spotify || album.id;
@@ -19,7 +17,6 @@ const handleToggleAlbum = async (e) => {
   e.stopPropagation();
   try {
     if (isSaved) {
-      // Usa o spotifyId para garantir que sempre tem ID
       await api.delete(`/albums/${spotifyId}`);
       setIsSaved(false); 
       if (isLibrary && onRemove) {
@@ -105,7 +102,7 @@ const handleToggleAlbum = async (e) => {
       transition: 'all 0.3s ease',
       cursor: 'pointer',
       height: '100%',
-      position: 'relative', // Necessário para a Badge absoluta
+      position: 'relative',
       overflow: 'hidden'
     },
     typeBadge: {

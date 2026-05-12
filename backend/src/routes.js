@@ -17,8 +17,8 @@ routes.post('/login', AuthController.login);
 routes.post('/forgot-password', ForgotPasswordController.recover);
 routes.post('/reset-password', ResetPasswordController.reset);
 routes.get('/api/search', SpotifyController.search);
-routes.get('/api/spotify/albums/:id_spotify', SpotifyController.getAlbum);
-routes.get('/api/spotify/tracks/:id_spotify', SpotifyController.getTrack);
+routes.get('/api/spotify/albums/:id', SpotifyController.getAlbum);
+routes.get('/api/spotify/tracks/:id', SpotifyController.getTrack);
 routes.get('/reviews', ReviewController.index);
 
 // ==========================

@@ -37,13 +37,24 @@ module.exports = {
 
   // 2. Busca Detalhes de UM Álbum (com as músicas)
   async getAlbum(req, res) {
-    const { id_spotify } = req.params;
+    const id = req.params.id || req.params.albumId || req.params.spotifyId;
+    if (!id || id === 'undefined') {
+      return res.status(400).json({ error: 'O ID do item não foi recebido.' });
+    }
+
     try {
-      const albumFullData = await spotifyService.getAlbumDetails(id_spotify);
-      return res.json(albumFullData);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Erro ao buscar detalhes do álbum no Spotify.' });
+      const data = await spotifyService.getAlbumDetails(id);
+      data.type = 'album'; 
+      return res.json(data);
+    } catch (albumError) {
+      try {
+        const trackData = await spotifyService.getTrackDetails(id);
+        trackData.type = 'track';
+        return res.json(trackData);
+      } catch (trackError) {
+        console.error(`Falhou ao buscar detalhes do ID ${id}.`);
+        return res.status(404).json({ error: 'Item não encontrado no Spotify.' });
+      }
     }
   },
 

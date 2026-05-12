@@ -11,10 +11,9 @@ function AlbumDetails() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadAlbumDetails() {
-      try {
-        // Usamos aquela rota que criámos no passo anterior para buscar tudo!
-        const response = await api.get(`/api/spotify/albums/${id}`);
+  async function loadAlbumDetails() {
+    try {
+      const response = await api.get(`/api/spotify/albums/${id}`);
         setAlbum(response.data);
       } catch (error) {
         console.error("Erro ao carregar detalhes do álbum:", error);
