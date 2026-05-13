@@ -3,6 +3,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function Sidebar() {
+  // 1. Resgata os dados do usuário para verificar o cargo (role)
+const userString = localStorage.getItem('@MusicReview:user') || sessionStorage.getItem('@MusicReview:user');
+  const user = userString ? JSON.parse(userString) : null;
+  const isAdmin = user?.role === 'ADMIN';
+
+    console.log("Dados do utilizador:", user, "| É admin?", isAdmin);
+
   const styles = {
     container: {
       width: '260px',
@@ -38,13 +45,25 @@ function Sidebar() {
     <aside style={styles.container}>
       {/* Navegação Principal */}
       <div style={styles.section}>
-        <Link to="/" style={styles.navItem} className="hover-white">
+        <Link to="/home" style={styles.navItem} className="hover-white">
           <i className="bi bi-house-door-fill"></i> Início
         </Link>
         <Link to="/explorar" style={styles.navItem} className="hover-white">
           <i className="bi bi-compass"></i> Explorar
         </Link>
       </div>
+
+      {/* 2. Seção de Administração (Condicional - Só aparece para ADMIN) */}
+      {isAdmin && (
+        <div style={{ ...styles.section, border: '1px solid rgba(220, 53, 69, 0.3)' }}>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <span className="small fw-bold text-danger">ADMINISTRAÇÃO</span>
+          </div>
+          <Link to="/admin" style={{ ...styles.navItem, color: '#dc3545' }} className="hover-white">
+            <i className="bi bi-shield-lock-fill"></i> Gerenciar Contas
+          </Link>
+        </div>
+      )}
 
       {/* Biblioteca */}
       <div style={styles.section}>
@@ -65,4 +84,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar; 
+export default Sidebar;
