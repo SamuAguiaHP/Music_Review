@@ -35,6 +35,6 @@ routes.post('/reviews', authMiddleware, ReviewController.createOrUpdate);
 // Rotas de Admin (authMiddleware + adminMiddleware)
 // ==========================
 routes.get('/admin/users', authMiddleware, adminMiddleware, AdminController.listUsers);
-
+routes.delete('/admin/users/:id', authMiddleware, adminMiddleware, AdminController.deleteUser);
 
 module.exports = routes;
