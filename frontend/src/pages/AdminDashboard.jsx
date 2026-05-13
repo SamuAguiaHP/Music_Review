@@ -30,6 +30,20 @@ function AdminDashboard() {
     fetchUsers();
   }, [navigate]);
 
+  const handleDeleteUser = async (userId, userName) => {
+    // Alerta de confirmação nativo do navegador
+    if (window.confirm(`Tem certeza que deseja excluir permanentemente a conta de ${userName}? Essa ação não pode ser desfeita.`)) {
+      try {
+        await api.delete(`/admin/users/${userId}`);
+        
+        // Remove o usuário da tabela instantaneamente sem precisar recarregar a página
+        setUsers(users.filter(user => user.id !== userId));
+      } catch (err) {
+        alert(err.response?.data?.error || 'Erro ao excluir usuário.');
+      }
+    }
+  };
+
   return (
     <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white' }}>
       <Header />
@@ -73,7 +87,7 @@ function AdminDashboard() {
                       {new Date(user.created_at).toLocaleDateString('pt-BR')}
                     </td>
                     <td className="text-end">
-                      <button className="btn btn-sm btn-outline-danger" title="Excluir usuário">
+                      <button className="btn btn-sm btn-outline-danger" title="Excluir usuário" onClick={() => handleDeleteUser(user.id, user.name)}>
                         <i className="bi bi-trash"></i>
                       </button>
                     </td>
