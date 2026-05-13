@@ -6,6 +6,8 @@ const AlbumController = require('./controllers/AlbumController');
 const ForgotPasswordController = require('./controllers/ForgotPasswordController');
 const ResetPasswordController = require('./controllers/ResetPasswordController');
 const ReviewController = require('./controllers/ReviewController');
+const adminMiddleware = require('./middlewares/adminMiddleware');
+const AdminController = require('./controllers/AdminController');
 
 const routes = express.Router();
 
@@ -28,6 +30,11 @@ routes.post('/albums', authMiddleware, AlbumController.create);
 routes.get('/albums', authMiddleware, AlbumController.index);  
 routes.delete('/albums/:id_spotify', authMiddleware, AlbumController.remove);
 routes.post('/reviews', authMiddleware, ReviewController.createOrUpdate);
+
+// ==========================
+// Rotas de Admin (authMiddleware + adminMiddleware)
+// ==========================
+routes.get('/admin/users', authMiddleware, adminMiddleware, AdminController.listUsers);
 
 
 module.exports = routes;
