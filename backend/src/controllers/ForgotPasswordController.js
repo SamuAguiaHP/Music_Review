@@ -21,6 +21,7 @@ module.exports = {
 
       // Cria um link simulado para o Front-end (no futuro, adicionamos um Token real aqui)
       const resetLink = `http://localhost:5173/reset-password?email=${email}`;
+      
 
       // Dispara o e-mail
       await sendRecoveryEmail(email, resetLink);

@@ -1,4 +1,4 @@
-const prisma = require('../prisma'); // Puxa a nossa conexão otimizada com o banco
+const prisma = require('../prisma'); 
 
 module.exports = {
   async create(req, res) {

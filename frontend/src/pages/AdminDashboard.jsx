@@ -18,7 +18,7 @@ function AdminDashboard() {
       } catch (err) {
         // Se der erro (ex: não for admin), manda de volta pra Home
         if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-          navigate('/home');
+          navigate('/');
         } else {
           setError('Erro ao carregar a lista de usuários.');
         }
