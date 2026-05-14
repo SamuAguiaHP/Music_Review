@@ -5,12 +5,10 @@ import React, { useState } from 'react';
 function Header() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  
-  // 1. LER: Agora ele procura no LocalStorage PRIMEIRO. Se não achar, procura no SessionStorage.
+
   const userString = localStorage.getItem('@MusicReview:user') || sessionStorage.getItem('@MusicReview:user');
   const user = userString ? JSON.parse(userString) : null;
 
-  // Função que dispara ao dar "Enter" na pesquisa
   const handleSearch = (e) => {
     e.preventDefault(); // Evita que a página recarregue
     if (!search.trim()) return; // Não faz nada se estiver vazio
@@ -18,7 +16,6 @@ function Header() {
   };
 
   const handleLogout = () => {
-    // 2. DESTRUIR: Limpamos os DOIS cofres para garantir que nada fica para trás
     localStorage.removeItem('@MusicReview:token');
     localStorage.removeItem('@MusicReview:user');
     sessionStorage.removeItem('@MusicReview:token');
@@ -27,7 +24,6 @@ function Header() {
     navigate('/login');
   };
 
-  // Estilos inline para garantir a consistência visual
   const styles = {
     nav: {
       background: 'linear-gradient(to right, #121212, #2b1055)',
@@ -100,7 +96,7 @@ function Header() {
                 <li><h6 className="dropdown-header text-secondary">Olá, {user.name}</h6></li>
                 {/* Opções solicitadas */}
                 <li><Link className="dropdown-item py-2 text-white" to="/opcoes">⚙️ Opções</Link></li>
-                <li><Link className="dropdown-item py-2 text-white" to="/perfil">👤 Gerenciar conta</Link></li>
+                <li><Link className="dropdown-item py-2 text-white" to="/profile">👤 Gerenciar conta</Link></li>
                 <li><hr className="dropdown-divider border-secondary opacity-25" /></li>
                 <li><button className="dropdown-item text-danger fw-bold" onClick={handleLogout}>🚪 Sair</button></li>
               </ul>

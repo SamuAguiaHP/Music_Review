@@ -7,6 +7,7 @@ import ResetPassword from './pages/ResetPassword';
 import AlbumDetails from './pages/AlbumDetails';
 import ReviewPage from './pages/ReviewPage';
 import AdminDashboard from './pages/AdminDashboard';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/album/:id" element={<AlbumDetails />} />
         <Route path="/review/:id" element={<ReviewPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );
