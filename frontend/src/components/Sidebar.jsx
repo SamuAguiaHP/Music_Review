@@ -7,9 +7,6 @@ function Sidebar() {
 const userString = localStorage.getItem('@MusicReview:user') || sessionStorage.getItem('@MusicReview:user');
   const user = userString ? JSON.parse(userString) : null;
   const isAdmin = user?.role === 'ADMIN';
-
-    console.log("Dados do utilizador:", user, "| É admin?", isAdmin);
-
   const styles = {
     container: {
       width: '260px',
@@ -53,7 +50,7 @@ const userString = localStorage.getItem('@MusicReview:user') || sessionStorage.g
         </Link>
       </div>
 
-      {/* 2. Seção de Administração (Condicional - Só aparece para ADMIN) */}
+      {/* 2. Seção da Administração*/}
       {isAdmin && (
         <div style={{ ...styles.section, border: '1px solid rgba(220, 53, 69, 0.3)' }}>
           <div className="d-flex justify-content-between align-items-center mb-3">

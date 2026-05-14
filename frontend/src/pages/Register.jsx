@@ -31,7 +31,7 @@ function Register() {
 
     setLoading(true);
     try {
-      await api.post('/register', { name, email, password });
+      await api.post('/register', { name, email, password, isAdmin: false });
       alert('Conta criada com sucesso! Faça login para continuar.');
       navigate('/login');
     } catch (err) {
