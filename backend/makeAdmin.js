@@ -1,7 +1,10 @@
 const prisma = require('./src/prisma');
 
+// Este script é para promover um usuário comum a ADMIN.
+// Basta rodar: node makeAdmin.js
+
 async function promoteToAdmin() {
-  const emailDoAdmin = 'admin@gmail.com'; // 🚨 COLOQUE AQUI O EMAIL DA SUA CONTA
+  const emailDoAdmin = 'admin@gmail.com'; // COLOQUE AQUI O EMAIL DA SUA CONTA
 
   try {
     const user = await prisma.user.update({
