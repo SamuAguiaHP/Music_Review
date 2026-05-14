@@ -15,7 +15,7 @@ const routes = express.Router();
 // ==========================
 // Rotas Públicas (Não precisam de login)
 // ==========================
-routes.post('/users', UserController.register);
+routes.post('/register', UserController.register);
 routes.post('/login', AuthController.login);
 routes.post('/forgot-password', ForgotPasswordController.recover);
 routes.post('/reset-password', ResetPasswordController.reset);
