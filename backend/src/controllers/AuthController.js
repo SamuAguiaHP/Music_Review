@@ -5,41 +5,6 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_music_review';
 
 module.exports = {
-  // ==========================================
-  // 1. ROTA DE CADASTRO (REGISTER)
-  // ==========================================
-  async register(req, res) {
-    try {
-      const { name, email, password } = req.body;
-
-      // Verifica se o email já está em uso
-      const userExists = await prisma.user.findUnique({ where: { email } });
-      if (userExists) {
-        return res.status(400).json({ error: 'Este e-mail já está cadastrado.' });
-      }
-
-      // Criptografa a senha antes de salvar no banco
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await prisma.user.create({
-        data: {
-          name,
-          email,
-          password: hashedPassword,
-        },
-      });
-
-      // Retorna o usuário criado, mas deleta a senha do objeto de resposta por segurança
-      delete user.password;
-      return res.status(201).json(user);
-
-    } catch (error) {
-      return res.status(500).json({ error: 'Erro interno no servidor ao registrar.' });
-    }
-  },
-
-  // ==========================================
-  // 2. ROTA DE LOGIN
-  // ==========================================
   async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -58,7 +23,7 @@ module.exports = {
 
       // Gera o Token JWT
       const token = jwt.sign(
-        { id: user.id, role: user.role }, // Dados que vão dentro do token (Payload)
+        { id: user.id, role: user.role },
         JWT_SECRET,
         { expiresIn: '1h' }
       );

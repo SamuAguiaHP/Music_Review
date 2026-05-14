@@ -29,7 +29,7 @@ module.exports = {
     const { id } = req.params;
 
     try {
-      // Regra de ouro: Um admin não deve conseguir deletar a si mesmo nesta tela
+      // Um admin não deve conseguir deletar a si mesmo
       if (id === req.userId) {
         return res.status(400).json({ error: 'Você não pode excluir sua própria conta de administrador por aqui.' });
       }
