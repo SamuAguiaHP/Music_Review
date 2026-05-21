@@ -5,15 +5,15 @@ import api from '../services/api';
 function AlbumCard({ album, isLibrary = false, onRemove, onSaveSuccess}) {  
   const [isSaved, setIsSaved] = useState(isLibrary);
   const navigate = useNavigate();
-  const spotifyId = album.id_spotify || album.id;
 
+  const spotifyId = album.id_spotify || album.id;
   const isVisualTrack = album.type === 'track' || album.album_type === 'single';
   const typeLabel = isVisualTrack ? 'Música' : 'Álbum';
   const badgeColor = isVisualTrack ? '#0dcaf0' : '#a855f7'; // Azul para música, Roxo para álbum
   const typeIcon = isVisualTrack ? 'bi-music-note-beamed' : 'bi-disc';
 
   const apiRouteType = album.type === 'track' ? 'tracks' : 'albums';
-const handleToggleAlbum = async (e) => {
+  const handleToggleAlbum = async (e) => {
   e.stopPropagation();
   try {
     if (isSaved) {
@@ -24,8 +24,6 @@ const handleToggleAlbum = async (e) => {
       }
     } else {
       let formattedTracks = [];
-
-      // Se for música, busca na rota de músicas!
       if (apiRouteType === 'tracks') {
         const spotifyResponse = await api.get(`/api/spotify/tracks/${spotifyId}`);
         const trackData = spotifyResponse.data;
@@ -51,17 +49,16 @@ const handleToggleAlbum = async (e) => {
         }));
       }
 
-      // Se veio do Spotify, ele usa 'name' e 'artists[0].name'
       const payload = {
         id_spotify: spotifyId,
         title: album.title || album.name || 'Título Desconhecido',
-        artist: album.artist || (album.artists && album.artists.length > 0 ? album.artists[0].name : 'Artista Desconhecido'), 
-        cover_url: album.cover_url || (album.images && album.images.length > 0 ? album.images[0].url : 'https://via.placeholder.com/300'),
+          artist: album.artist || album.artists?.[0]?.name || 'Artista Desconhecido', 
+          cover_url: album.cover_url || album.images?.[0]?.url || 'https://placehold.co/300x300/1e1e1e/ffffff?text=Sem+Capa',
         type: isVisualTrack ? 'track' : 'album',
         tracks: formattedTracks 
       };
 
-      // 3. Salva no banco!
+      // Salva no banco!
       await api.post('/albums', payload);
       
       setIsSaved(true);
@@ -143,7 +140,7 @@ const handleToggleAlbum = async (e) => {
 
       <div style={{ padding: '12px' }}>
         <img 
-          src={album.cover_url || album.images?.[0]?.url || "https://via.placeholder.com/300"} 
+          src={album.cover_url || album.images?.[0]?.url || album.album?.images?.[0]?.url || "https://placehold.co/300x300/1e1e1e/ffffff?text=Sem+Capa"} 
           className="card-img-top" 
           alt={album.title} 
           style={{ borderRadius: '12px', aspectRatio: '1/1', objectFit: 'cover' }}

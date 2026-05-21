@@ -42,7 +42,7 @@ const userString = localStorage.getItem('@MusicReview:user') || sessionStorage.g
     <aside style={styles.container}>
       {/* Navegação Principal */}
       <div style={styles.section}>
-        <Link to="/home" style={styles.navItem} className="hover-white">
+        <Link to="/" style={styles.navItem} className="hover-white">
           <i className="bi bi-house-door-fill"></i> Início
         </Link>
         <Link to="/explorar" style={styles.navItem} className="hover-white">
