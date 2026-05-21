@@ -8,7 +8,7 @@ function Sidebar({ isOpen, isMobile, closeSidebar }) {
   const isAdmin = user?.role === 'ADMIN';
 
   const styles = {
-    // 1. Overlay: Fica atrás da sidebar, escurece apenas o conteúdo da página
+    // 1. Overlay: Fica atrás do Header, escurece apenas o conteúdo da página
     overlay: {
       position: 'fixed',
       top: 0,
@@ -16,7 +16,7 @@ function Sidebar({ isOpen, isMobile, closeSidebar }) {
       width: '100vw',
       height: '100vh',
       backgroundColor: 'rgba(0, 0, 0, 0.6)', // Fundo escuro
-      zIndex: 1045, // Abaixo da sidebar
+      zIndex: 1000, // Abaixo do Header
       display: isMobile && isOpen ? 'block' : 'none'
     },
     // 2. Sidebar: Conteúdo no topo, opacidade 100% sempre
@@ -33,7 +33,7 @@ function Sidebar({ isOpen, isMobile, closeSidebar }) {
       padding: '20px',
       paddingTop: '90px',
       transition: 'left 0.3s ease-in-out',
-      zIndex: 1050, // Sidebar no topo, acima do overlay
+      zIndex: 1000, // Sidebar no topo, acima do overlay
       overflowY: 'auto'
     },
     section: {
