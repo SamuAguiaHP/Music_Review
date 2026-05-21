@@ -29,7 +29,7 @@ async function getSpotifyToken() {
 async function searchItems(query) {
   const token = await getSpotifyToken(); 
 
-  const baseURL = "https" + "://" + "api.spotify.com" + "/v1";
+  const baseURL = "https://api.spotify.com/v1";
   const response = await axios.get(`${baseURL}/search`, {
     headers: {
       'Authorization': `Bearer ${token}`
@@ -37,7 +37,7 @@ async function searchItems(query) {
     params: {
       q: query,
       type: 'album,track',
-      limit: 10 
+      limit: 10 //Limite máximo de resultados permitido pela API do Spotify.
     }
   });
 
@@ -47,7 +47,7 @@ async function searchItems(query) {
 async function getAlbumDetails(albumId) {
   const token = await getSpotifyToken();
   
-  const baseURL = "https://" + "api" + ".spotify" + ".com/v1";
+  const baseURL = "https://api.spotify.com/v1";
   const url = `${baseURL}/albums/${albumId}`;
   const response = await axios.get(url, {
     headers: { 'Authorization': `Bearer ${token}` }
@@ -58,7 +58,7 @@ async function getAlbumDetails(albumId) {
 async function getTrackDetails(trackId) {
   const token = await getSpotifyToken();
   
-  const baseURL = "https://" + "api" + ".spotify" + ".com/v1";
+  const baseURL = "https://api.spotify.com/v1";
   const url = `${baseURL}/tracks/${trackId}`;
   const response = await axios.get(url, {
     headers: { 'Authorization': `Bearer ${token}` }
