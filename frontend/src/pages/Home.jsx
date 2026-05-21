@@ -37,7 +37,7 @@ function Home() {
           setAlbums(response.data);
         }
       } catch (error) {
-        console.error("Erro ao carregar álbuns:", error);
+        console.error("Erro ao carregar álbuns:", error.message);
       } finally {
         setLoading(false);
       }
