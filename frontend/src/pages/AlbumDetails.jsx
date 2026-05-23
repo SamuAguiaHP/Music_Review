@@ -10,6 +10,22 @@ function AlbumDetails() {
   const [album, setAlbum] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // ESTADOS DA SIDEBAR RESPONSIVA
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 992);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobileView = window.innerWidth <= 992;
+      setIsMobile(mobileView);
+      if (!mobileView) setIsSidebarOpen(true);
+      if (mobileView && isSidebarOpen) setIsSidebarOpen(false);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isSidebarOpen]);
+
   useEffect(() => {
     async function loadItemDetails() {
       try {
@@ -17,14 +33,21 @@ function AlbumDetails() {
         // Garantimos que bate na rota que você manteve configurada no routes do backend
         const response = await api.get(`/api/spotify/albums/${id}`);
         setAlbum(response.data);
-      } catch (error) {
-        console.error("Erro ao carregar detalhes:", error);
+      } catch (err) {
+        console.error(err);
+        // 👇 FEEDBACK DE ERRO: Avisa se o token expirou ou se o usuário foi deslogado (401)
+        if (err.response?.status === 401) {
+          alert("Sua sessão expirou! Por favor, faça login novamente.");
+          navigate('/login');
+        } else {
+          alert("Erro ao publicar avaliação. Tente novamente.");
+        }
       } finally {
         setLoading(false);
       }
     }
     if (id) loadItemDetails();
-  }, [id]);
+  }, [id, navigate]);
 
   // Função para formatar milissegundos para minutos:segundos (ex: 3:45)
   const formatDuration = (ms) => {
@@ -36,7 +59,14 @@ function AlbumDetails() {
 
   const styles = {
     container: { backgroundColor: '#121212', minHeight: '100vh', color: 'white' },
-    main: { marginLeft: '260px', paddingTop: '100px', padding: '40px' },
+    main: {
+      marginLeft: !isMobile && isSidebarOpen ? '260px' : '0',
+      transition: 'margin-left 0.3s ease-in-out',
+      paddingTop: '100px',
+      paddingRight: isMobile ? '15px' : '40px',
+      paddingLeft: isMobile ? '15px' : '40px',
+      paddingBottom: '40px'
+    },
     card: {
       backgroundColor: '#1e1e1e',
       borderRadius: '12px',
@@ -54,10 +84,14 @@ function AlbumDetails() {
 
   return (
     <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white' }}>
-      <Header />
-      <Sidebar />
+      <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        isMobile={isMobile}
+        closeSidebar={() => setIsSidebarOpen(false)}
+      />
 
-      <main style={{ marginLeft: '260px', paddingTop: '100px', paddingRight: '40px', paddingLeft: '40px', paddingBottom: '40px' }}>
+      <main style={styles.main}>
 
         <button className="btn btn-outline-light mb-4" onClick={() => navigate(-1)}>
           <i className="bi bi-arrow-left me-2"></i> Voltar
@@ -72,26 +106,27 @@ function AlbumDetails() {
         ) : (
           <>
             {/* Cabeçalho do Item Normalizado */}
-            <div className="d-flex align-items-end mb-5">
+            <div className={`d-flex ${isMobile ? 'flex-column text-center align-items-center' : 'align-items-end'} mb-5`}>
               <img
                 src={album.cover_url || "https://placehold.co/300x300/1e1e1e/ffffff?text=Sem+Capa"}
                 alt={album.name}
                 style={{ width: '230px', height: '230px', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}
               />
-              <div className="ms-4">
+              <div className={`${isMobile ? 'mt-4' : 'ms-4'}`}>
                 <span className="text-uppercase fw-bold" style={{ fontSize: '0.8rem', letterSpacing: '1px', color: album.type === 'track' ? '#0dcaf0' : '#a855f7' }}>
                   {album.type === 'track' ? 'Música' : 'Álbum'}
                 </span>
-                <h1 className="display-3 fw-bold mb-3 text-truncate" style={{ lineHeight: '1.2', maxWidth: '800px' }}>
-                  {album.name}
-                </h1>
+                <h1 className="display-4 fw-bold text-white my-2">{album.title || album.name}</h1>
+                <p className="fs-5 text-secondary mb-0">
+                  {album.artist || (album.artists && album.artists.map(a => a.name).join(', '))}
+                </p>
                 <div className="d-flex align-items-center flex-wrap">
                   <span className="fw-bold">{album.artists?.map(a => a.name).join(', ')}</span>
                   <span className="mx-2">•</span>
                   <span className="text-secondary">{album.release_date?.substring(0, 4)}</span>
                   <span className="mx-2">•</span>
                   <span className="text-secondary">{album.total_tracks} {album.total_tracks === 1 ? 'música' : 'músicas'}</span>
-                  
+
                   <Link to={`/review/${album.id}`} className="btn btn-primary btn-sm ms-md-3 mt-2 mt-md-0" style={styles.btnPrimary}>
                     <i className="bi bi-chat-left-text-fill me-2"></i> Ver Avaliações
                   </Link>
@@ -113,7 +148,7 @@ function AlbumDetails() {
                 </thead>
                 <tbody>
                   {album.tracks?.map((track, index) => (
-                    <tr 
+                    <tr
                       key={track.id_spotify}
                       onClick={() => {
                         if (id === track.id_spotify) return;

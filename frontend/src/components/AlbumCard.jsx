@@ -12,30 +12,18 @@ function AlbumCard({ album, isLibrary = false, onRemove, onSaveSuccess}) {
   const badgeColor = isVisualTrack ? '#0dcaf0' : '#a855f7'; // Azul para música, Roxo para álbum
   const typeIcon = isVisualTrack ? 'bi-music-note-beamed' : 'bi-disc';
 
-  const apiRouteType = album.type === 'track' ? 'tracks' : 'albums';
   const handleToggleAlbum = async (e) => {
   e.stopPropagation();
   try {
     if (isSaved) {
       await api.delete(`/albums/${spotifyId}`);
       setIsSaved(false); 
-      if (isLibrary && onRemove) {
+      alert("Álbum removido da sua biblioteca!");
+      if (onRemove) {
         onRemove(spotifyId);
       }
     } else {
       let formattedTracks = [];
-      if (apiRouteType === 'tracks') {
-        const spotifyResponse = await api.get(`/api/spotify/tracks/${spotifyId}`);
-        const trackData = spotifyResponse.data;
-
-        // Uma música única equivale a uma "lista" de 1 faixa para o nosso banco
-        formattedTracks = [{
-          id_spotify: trackData.id,
-          title: trackData.name,
-          track_number: trackData.track_number || 1,
-          duration: trackData.duration_ms || 0,
-        }];
-      } else {
         // Se for álbum, busca na rota de álbuns
         const spotifyResponse = await api.get(`/api/spotify/albums/${spotifyId}`);
         const fullAlbumData = spotifyResponse.data;
@@ -47,7 +35,6 @@ function AlbumCard({ album, isLibrary = false, onRemove, onSaveSuccess}) {
           track_number: track.track_number || 1,
           duration: track.duration_ms || 0,
         }));
-      }
 
       const payload = {
         id_spotify: spotifyId,
@@ -60,13 +47,10 @@ function AlbumCard({ album, isLibrary = false, onRemove, onSaveSuccess}) {
 
       // Salva no banco!
       await api.post('/albums', payload);
-      
       setIsSaved(true);
-
       if (onSaveSuccess) {
           onSaveSuccess(); 
         }
-        
         alert(`"${payload.title}" adicionado à sua biblioteca!`);
     }
   } catch (error) {

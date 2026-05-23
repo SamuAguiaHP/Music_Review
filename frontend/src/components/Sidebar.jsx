@@ -63,17 +63,9 @@ function Sidebar({ isOpen, isMobile, closeSidebar }) {
         <div style={styles.section}>
           <Link 
             to="/" 
-            onClick={closeSidebar} 
             style={{...styles.navItem, color: location.pathname === '/' ? '#fff' : '#b3b3b3'}}
           >
             <i className="bi bi-house-door-fill"></i> Início
-          </Link>
-          <Link 
-            to="/explorar" 
-            onClick={closeSidebar} 
-            style={{...styles.navItem, color: location.pathname === '/explorar' ? '#fff' : '#b3b3b3'}}
-          >
-            <i className="bi bi-compass"></i> Explorar
           </Link>
         </div>
 
@@ -90,20 +82,6 @@ function Sidebar({ isOpen, isMobile, closeSidebar }) {
             </Link>
           </div>
         )}
-
-        {/* Biblioteca */}
-        <div style={styles.section}>
-          <div className="d-flex justify-content-between align-items-center mb-3 text-secondary">
-            <span className="small fw-bold">SUA BIBLIOTECA</span>
-          </div>
-          
-          {['Favoritos', 'Ouvir Depois', 'Rock 80s'].map(item => (
-            <div key={item} style={styles.navItem} className="text-secondary">
-              <div style={{ width: '40px', height: '40px', backgroundColor: '#2b1055', borderRadius: '4px' }}></div>
-              <span className="text-truncate">{item}</span>
-            </div>
-          ))}
-        </div>
       </aside>
     </>
   );

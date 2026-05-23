@@ -32,6 +32,7 @@ routes.delete('/albums/:id_spotify', authMiddleware, AlbumController.remove);
 routes.post('/reviews', authMiddleware, ReviewController.createOrUpdate);
 routes.get('/users/profile', authMiddleware, UserController.getProfile);
 routes.put('/users/profile', authMiddleware, UserController.updateProfile);
+routes.delete('/reviews/:id', authMiddleware, ReviewController.delete);
 
 // ==========================
 // Rotas de Admin (authMiddleware + adminMiddleware)

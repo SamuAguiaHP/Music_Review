@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -9,7 +9,8 @@ function Home() {
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-  const query = searchParams.get('q'); 
+  const query = searchParams.get('q');
+  const navigate = useNavigate();
 
   // ESTADOS DA SIDEBAR RESPONSIVA
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 992);
@@ -26,7 +27,7 @@ function Home() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [isSidebarOpen]);
 
   const loadLibrary = async () => {
     try {
@@ -49,14 +50,19 @@ function Home() {
           const response = await api.get('/albums');
           setAlbums(response.data);
         }
-      } catch (error) {
-        console.error("Erro ao carregar itens:", error);
+      } catch (err) {
+        console.error(err);
+        // 👇 FEEDBACK DE ERRO: Avisa se o token expirou ou se o usuário foi deslogado (401)
+        if (err.response?.status === 401) {
+          alert("Sua sessão expirou! Por favor, faça login novamente.");
+          navigate('/login');
+        } else { alert("Erro ao publicar avaliação. Tente novamente."); }
       } finally {
         setLoading(false);
       }
     }
     loadAlbums();
-  }, [query]); 
+  }, [query, navigate]);
 
   const handleRemoveAlbum = (id_spotify) => {
     setAlbums(prevAlbums => prevAlbums.filter(album => album.id_spotify !== id_spotify));
@@ -79,9 +85,9 @@ function Home() {
       <div className="row g-4">
         {items.map((item) => (
           <div className="col-12 col-md-6 col-xxl-4" key={item.id_spotify || item.id}>
-            <AlbumCard 
-              album={item} 
-              isLibrary={!query} 
+            <AlbumCard
+              album={item}
+              isLibrary={!query}
               onRemove={handleRemoveAlbum}
               onSaveSuccess={loadLibrary}
             />
@@ -93,27 +99,27 @@ function Home() {
 
   return (
     <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white', overflowX: 'hidden' }}>
-      
-      {/* INTEGRAÇÃO DO TOGGLE */}
-      <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} /> 
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        isMobile={isMobile} 
-        closeSidebar={() => setIsSidebarOpen(false)} 
-      /> 
 
-      <main style={{ 
-        marginLeft: !isMobile && isSidebarOpen ? '260px' : '0', 
+      {/* INTEGRAÇÃO DO TOGGLE */}
+      <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        isMobile={isMobile}
+        closeSidebar={() => setIsSidebarOpen(false)}
+      />
+
+      <main style={{
+        marginLeft: !isMobile && isSidebarOpen ? '260px' : '0',
         transition: 'margin-left 0.3s ease-in-out',
-        paddingTop: '100px', 
-        paddingRight: '30px', 
-        paddingLeft: '30px', 
-        paddingBottom: '40px' 
+        paddingTop: '100px',
+        paddingRight: '30px',
+        paddingLeft: '30px',
+        paddingBottom: '40px'
       }}>
-        
+
         <header className="mb-5">
           <h1 className="display-5 fw-bold">
-            {query ? `Resultados para ` : 'Sua ' }
+            {query ? `Resultados para ` : 'Sua '}
             <span style={{ color: '#a855f7' }}>{query ? `"${query}"` : 'Biblioteca'}</span>
           </h1>
         </header>
@@ -125,7 +131,7 @@ function Home() {
         ) : (
           /* COLUNAS LADO A LADO */
           <div className="row g-5">
-            
+
             {/* Lado Esquerdo: MÚSICAS */}
             <div className="col-12 col-xl-6 border-end-xl border-secondary">
               <h3 className="fw-bold mb-4" style={{ color: '#0dcaf0', borderBottom: '2px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>

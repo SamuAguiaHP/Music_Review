@@ -13,7 +13,7 @@ function Header({ toggleSidebar }) {
   const handleSearch = (e) => {
     e.preventDefault();
     if (!search.trim()) return;
-    setIsSearchOpen(false); // Fecha a busca mobile ao enviar
+    setIsSearchOpen(false);
     navigate(`/?q=${search}`);
   };
 
@@ -81,7 +81,7 @@ function Header({ toggleSidebar }) {
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end" style={{ backgroundColor: '#1e1e1e', border: '1px solid #a855f7' }}>
                   <li><h6 className="dropdown-header text-secondary">Olá, {user.name}</h6></li>
-                  <li><Link className="dropdown-item py-2 text-white" to="/opcoes">⚙️ Opções</Link></li>
+                  <li><Link className="dropdown-item py-2 text-white" to="/profile">👤 Gerenciar conta</Link></li>
                   <li><button className="dropdown-item text-danger fw-bold" onClick={handleLogout}>🚪 Sair</button></li>
                 </ul>
               </div>

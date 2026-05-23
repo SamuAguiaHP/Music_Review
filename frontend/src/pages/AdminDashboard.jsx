@@ -15,17 +15,36 @@ function AdminDashboard() {
   const [createLoading, setCreateLoading] = useState(false);
 
   const navigate = useNavigate();
+  
+  // ESTADOS DA SIDEBAR RESPONSIVA
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 992);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
 
-  // Estilos seguindo o padrão da sua Sidebar
+  useEffect(() => {
+    const handleResize = () => {
+      const mobileView = window.innerWidth <= 992;
+      setIsMobile(mobileView);
+      if (!mobileView) setIsSidebarOpen(true); 
+      if (mobileView && isSidebarOpen) setIsSidebarOpen(false); 
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isSidebarOpen]);
+
   const styles = {
     container: {
       backgroundColor: '#121212',
       minHeight: '100vh',
       color: 'white',
     },
-    main: {
-      marginLeft: '260px',
-      padding: '100px 40px 40px',
+    main: { 
+      marginLeft: !isMobile && isSidebarOpen ? '260px' : '0', 
+      transition: 'margin-left 0.3s ease-in-out',
+      paddingTop: '100px', 
+      paddingRight: isMobile ? '15px' : '40px', 
+      paddingLeft: isMobile ? '15px' : '40px', 
+      paddingBottom: '40px' 
     },
     card: {
       backgroundColor: '#1e1e1e',
@@ -42,7 +61,7 @@ function AdminDashboard() {
       padding: '12px'
     },
     btnPrimary: {
-      backgroundColor: '#2b1055', // Roxo do seu padrão
+      backgroundColor: '#2b1055', // Roxo padrão
       border: 'none',
       borderRadius: '8px',
       fontWeight: '600',
@@ -56,10 +75,15 @@ function AdminDashboard() {
         const response = await api.get('/admin/users');
         setUsers(response.data);
       } catch (err) {
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          navigate('/');
+        console.error(err);
+        if (err.response?.status === 401) {
+          setError('Sua sessão expirou! Por favor, faça login novamente.');
+          navigate('/login');
+        } else if (err.response?.status === 403) {
+          setError('Acesso negado. Você não tem permissão para acessar esta página.');
+          navigate('/login');
         } else {
-          setError('Erro ao carregar a lista de usuários.');
+          setError('Erro ao carregar usuários. Tente novamente mais tarde.');
         }
       } finally {
         setLoading(false);
@@ -72,9 +96,7 @@ function AdminDashboard() {
     e.preventDefault();
     setCreateLoading(true);
     try {
-      // Enviando isAdmin: true como solicitado
-      await api.post('/users', { ...newAdmin, isAdmin: true });
-      
+      await api.post('/register', { ...newAdmin, isAdmin: true });
       alert('Novo administrador cadastrado com sucesso!');
       setNewAdmin({ name: '', email: '', password: '' });
       setRefreshTrigger(prev => prev + 1);
@@ -103,8 +125,12 @@ function AdminDashboard() {
 
   return (
     <div style={styles.container}>
-      <Header />
-      <Sidebar />
+      <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        isMobile={isMobile} 
+        closeSidebar={() => setIsSidebarOpen(false)} 
+      />
 
       <main style={styles.main}>
         {/* Cabeçalho do Painel */}

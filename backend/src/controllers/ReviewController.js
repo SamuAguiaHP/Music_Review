@@ -88,5 +88,37 @@ module.exports = {
       console.error(error);
       return res.status(500).json({ error: "Erro ao buscar avaliações." });
     }
+  },
+
+  async delete(req, res) {
+    const { id } = req.params;
+    const user_id = req.userId || req.usuarioId;
+
+    try {
+      // 1. Busca a avaliação no banco
+      const review = await prisma.review.findUnique({
+        where: { id }
+      });
+
+      if (!review) {
+        return res.status(404).json({ error: "Avaliação não encontrada." });
+      }
+
+      //Verifica se o usuário logado é o dono da review
+      if (review.user_id !== user_id) {
+        return res.status(403).json({ error: "Você não tem permissão para excluir esta avaliação." });
+      }
+
+      // 3. Deleta a avaliação
+      await prisma.review.delete({
+        where: { id }
+      });
+
+      return res.status(200).json({ message: "Avaliação excluída com sucesso." });
+
+    } catch (error) {
+      console.error("Erro ao excluir avaliação:", error);
+      return res.status(500).json({ error: "Erro interno ao excluir avaliação." });
+    }
   }
 };

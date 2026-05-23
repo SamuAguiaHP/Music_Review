@@ -6,18 +6,83 @@ import Sidebar from '../components/Sidebar';
 function Profile() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [newPassword, setNewPassword] = useState(''); // Senha que ele quer mudar
-  const [currentPassword, setCurrentPassword] = useState(''); // Senha para validar
+  const [newPassword, setNewPassword] = useState(''); 
+  const [currentPassword, setCurrentPassword] = useState(''); 
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
 
+  // ESTADOS DA SIDEBAR RESPONSIVA
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 992);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobileView = window.innerWidth <= 992;
+      setIsMobile(mobileView);
+      if (!mobileView) setIsSidebarOpen(true); 
+      if (mobileView && isSidebarOpen) setIsSidebarOpen(false); 
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isSidebarOpen]);
+
+  useEffect(() => {
+    async function loadUserData() {
+      try {
+        const storedUser = localStorage.getItem('@MusicReview:user') || sessionStorage.getItem('@MusicReview:user');
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          setName(user.name);
+          setEmail(user.email);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadUserData();
+  }, []);
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    setUpdating(true);
+    try {
+      const payload = { name, email, currentPassword };
+      if (newPassword.trim() !== '') {
+        payload.newPassword = newPassword;
+      }
+
+      const response = await api.put('/users/profile', payload);
+      const storage = localStorage.getItem('@MusicReview:user') ? localStorage : sessionStorage;
+      storage.setItem('@MusicReview:user', JSON.stringify(response.data));
+
+      alert('Perfil atualizado com sucesso!');
+      setNewPassword('');
+      setCurrentPassword('');
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.error || 'Erro ao atualizar perfil.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const styles = {
-    container: { backgroundColor: '#121212', minHeight: '100vh', color: 'white' },
-    main: { marginLeft: '260px', paddingTop: '100px', padding: '100px 40px 40px' },
+    container: { backgroundColor: '#121212', minHeight: '100vh', color: 'white', overflowX: 'hidden' },
+    main: { 
+      marginLeft: !isMobile && isSidebarOpen ? '260px' : '0', 
+      transition: 'margin-left 0.3s ease-in-out',
+      paddingTop: '100px', 
+      paddingRight: isMobile ? '15px' : '40px', 
+      paddingLeft: isMobile ? '15px' : '40px', 
+      paddingBottom: '40px' 
+    },
     card: {
       backgroundColor: '#1e1e1e',
       borderRadius: '12px',
-      padding: '30px',
+      padding: isMobile ? '20px' : '30px',
       border: '1px solid rgba(255, 255, 255, 0.05)',
       maxWidth: '600px',
       margin: '0 auto'
@@ -28,101 +93,65 @@ function Profile() {
       color: 'white',
       borderRadius: '8px',
       padding: '12px',
-      marginBottom: '15px'
+      marginBottom: '20px'
     },
     btnSave: {
-      backgroundColor: '#2b1055',
+      backgroundColor: '#a855f7',
       border: 'none',
       borderRadius: '8px',
-      fontWeight: '600',
       padding: '12px',
+      fontWeight: 'bold',
       width: '100%',
       marginTop: '10px'
     }
   };
 
-  useEffect(() => {
-    async function loadUserData() {
-      try {
-        const response = await api.get('/users/profile');
-        setName(response.data.name);
-        setEmail(response.data.email);
-      } catch (err) {
-        alert(err.response?.data?.error || 'Erro ao carregar dados do perfil.');
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadUserData();
-  }, []);
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    setUpdating(true);
-
-    try {
-      // Enviamos currentPassword para validação e password (a nova) caso ele queira mudar
-      const response = await api.put('/users/profile', { 
-        name, 
-        email, 
-        password: newPassword, 
-        currentPassword 
-      });
-      
-      // Atualiza o storage com os novos dados (exceto a senha que o back não envia)
-      if (localStorage.getItem('@MusicReview:user')) {
-        localStorage.setItem('@MusicReview:user', JSON.stringify(response.data));
-      } else {
-        sessionStorage.setItem('@MusicReview:user', JSON.stringify(response.data));
-      }
-
-      alert('Perfil atualizado com sucesso!');
-      setNewPassword('');
-      setCurrentPassword('');
-      
-      window.location.reload(); 
-    } catch (err) {
-      alert(err.response?.data?.error || 'Erro ao atualizar perfil.');
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  if (loading) return <div style={styles.container}><Header /><Sidebar /></div>;
-
   return (
     <div style={styles.container}>
-      <Header />
-      <Sidebar />
+      <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        isMobile={isMobile} 
+        closeSidebar={() => setIsSidebarOpen(false)} 
+      />
 
       <main style={styles.main}>
-        <div style={styles.card}>
-          <h2 className="fw-bold mb-4 text-center">Editar Perfil</h2>
-          <form onSubmit={handleUpdate}>
-            
-            <label className="form-label small fw-bold text-secondary">NOME COMPLETO</label>
-            <input type="text" className="form-control" style={styles.input} required
-              value={name} onChange={e => setName(e.target.value)} />
+        <header className="mb-5 text-center text-lg-start">
+          <h1 className="display-5 fw-bold text-center">Seu <span style={{ color: '#a855f7' }}>Perfil</span></h1>
+        </header>
 
-            <label className="form-label small fw-bold text-secondary">E-MAIL</label>
-            <input type="email" className="form-control" style={styles.input} required
-              value={email} onChange={e => setEmail(e.target.value)} />
+        {loading ? (
+          <div className="text-center py-5">
+            <div className="spinner-border" style={{ color: '#a855f7' }} role="status"></div>
+          </div>
+        ) : (
+          <div style={styles.card}>
+            <form onSubmit={handleUpdateProfile}>
+              <label className="form-label small fw-bold text-secondary">NOME COMPLETO</label>
+              <input type="text" className="form-control" style={styles.input} required
+                value={name} onChange={e => setName(e.target.value)} />
 
-            <hr className="my-4 opacity-25" />
+              <label className="form-label small fw-bold text-secondary">E-MAIL</label>
+              <input type="email" className="form-control" style={styles.input} required
+                value={email} onChange={e => setEmail(e.target.value)} />
 
-            <label style={{ color: 'rgb(136, 66, 248)' }} className="form-label small fw-bold">NOVA SENHA (OPCIONAL)</label>
-            <input type="password" placeholder="Deixe em branco para não alterar" className="form-control" style={styles.input}
-              value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+              <hr className="my-4 opacity-25" />
 
-            <label className="form-label small fw-bold" style={{ color: 'rgb(127, 48, 255)' }}>SENHA ATUAL (OBRIGATÓRIO)</label>
-            <input type="password" placeholder="Digite sua senha para confirmar" className="form-control" 
-              style={{ ...styles.input, marginBottom: 0 }} required
-              value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
-            <button type="submit" className="btn btn-primary" style={styles.btnSave} disabled={updating}>
-              {updating ? 'Processando...' : 'Confirmar Alterações'}
-            </button>
-          </form>
-        </div>
+              <label style={{ color: '#a855f7' }} className="form-label small fw-bold">NOVA SENHA (OPCIONAL)</label>
+              <input type="password" placeholder="Deixe em branco para não alterar" className="form-control" style={styles.input}
+                value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+
+              <label className="form-label small fw-bold" style={{ color: '#a855f7' }}>SENHA ATUAL (OBRIGATÓRIO)</label>
+              <input type="password" placeholder="Digite sua senha para confirmar" className="form-control" 
+                style={{ ...styles.input, marginBottom: 0 }} required
+                value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
+
+              <button type="submit" className="btn btn-primary" style={styles.btnSave} disabled={updating}>
+                {updating ? 'Processando...' : 'Salvar Alterações'}
+              </button>
+            </form>
+          </div>
+        )}
       </main>
     </div>
   );
