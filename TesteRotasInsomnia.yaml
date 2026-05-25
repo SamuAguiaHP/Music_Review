@@ -1,0 +1,467 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: MusicReviewAPI
+meta:
+  id: wrk_da084a3a035343c5956b58c20574a134
+  created: 1776195885961
+  modified: 1779581825182
+  description: Teste de rotas da aplicação MusicReview
+collection:
+  - name: Autenticação
+    meta:
+      id: fld_ddf0d67c345944a089a1f45618ec643d
+      created: 1778524912143
+      modified: 1779665091630
+      sortKey: -1778524942973
+      description: ""
+    children:
+      - url: "{{ _.Localhost.base_url }}/users"
+        name: Listar Usuários
+        meta:
+          id: req_12e31cf591f049458971aac003564afd
+          created: 1776203516195
+          modified: 1778525796430
+          isPrivate: false
+          description: ""
+          sortKey: -1778524961306
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url }}/register"
+        name: Register
+        meta:
+          id: req_1f568f0a8ec1460a978d58b356b972fe
+          created: 1777055372527
+          modified: 1779665133385
+          isPrivate: false
+          description: ""
+          sortKey: -1778524961506
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Fulano",
+              "email": "fulano@gmail.com",
+              "password": "123456"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        authentication:
+          type: none
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url }}/login"
+        name: Login
+        meta:
+          id: req_657b5cd7ebdf4756b8306400f022e545
+          created: 1777069325631
+          modified: 1779674603998
+          isPrivate: false
+          description: ""
+          sortKey: -1778524961406
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "samuelaquiar0@email.com",
+              "password": "123456"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        authentication:
+          type: none
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url }}/forgot-password"
+        name: Enviar email
+        meta:
+          id: req_6c1e748d6633468eba91b3d7d2c44ba8
+          created: 1777254853574
+          modified: 1779674830858
+          isPrivate: false
+          description: ""
+          sortKey: -1778524961356
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "samuelaquiar0@email.com"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        authentication:
+          type: none
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url }}/users/profile"
+        name: Atualizar Perfil
+        meta:
+          id: req_be69fca8ed834b5ebac66d46006fca51
+          created: 1779563244202
+          modified: 1779674577426
+          isPrivate: false
+          description: ""
+          sortKey: -1779563244202
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "dsai",
+              "email": "samuelaquiar0@email.com",
+              "currentPassword": "123456"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.6.0
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQwZmFkNjdmLTQxYzMtNGI3NS1hNWM3LWYxOGIxODk0NjU0ZSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3OTY3NDUwOSwiZXhwIjoxNzc5Njc4MTA5fQ.LEVTLTwYN3nMSUdeqFCNDXOeGLMURrrqR5Tj79_junA
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url
+          }}/admin/users/f7a31e67-aa38-4f50-87f3-9d2529ac5d5b"
+        name: Remover Perfil
+        meta:
+          id: req_29d2354a728a4c748a4949ca527393a9
+          created: 1779665352532
+          modified: 1779674523210
+          isPrivate: false
+          description: ""
+          sortKey: -1779665352532
+        method: DELETE
+        headers:
+          - name: Authorization
+            value: Bearer {% response 'body', 'req_657b5cd7ebdf4756b8306400f022e545',
+              'b64::JC50b2tlbg==::46b', 'always', 60 %}
+            description: ""
+            disabled: false
+        authentication:
+          type: bearer
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQwZmFkNjdmLTQxYzMtNGI3NS1hNWM3LWYxOGIxODk0NjU0ZSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3OTY3NDUwOSwiZXhwIjoxNzc5Njc4MTA5fQ.LEVTLTwYN3nMSUdeqFCNDXOeGLMURrrqR5Tj79_junA
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Biblioteca
+    meta:
+      id: fld_16fefda7aaf842d48094d1d739a81f97
+      created: 1778524924643
+      modified: 1779581592007
+      sortKey: -1778524942923
+      description: ""
+    children:
+      - url: "{{ _.Localhost.base_url }}/albums"
+        name: Salvar Álbum
+        meta:
+          id: req_da61ebb2c2a34cac968bd47e5d6292f6
+          created: 1779582170658
+          modified: 1779582427494
+          isPrivate: false
+          description: ""
+          sortKey: -1779582170658
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "id_spotify": "1T9w49bdt24uKdx51167P7",
+              "title": "Nevermind (Remastered)",
+              "artist": "Nirvana",
+              "cover_url": "https://i.scdn.co/image/ab67616d0000b2734f669a84a22b918ed9f84852",
+              "type": "album",
+              "tracks": [
+                {
+                  "id_spotify": "3CQerT82ZEXhLzFzYyR3q7",
+                  "title": "Smells Like Teen Spirit",
+                  "track_number": 1,
+                  "duration": 301920
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.6.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url }}/albums"
+        name: Listar Álbuns
+        meta:
+          id: req_38ca01dccb5348c8926fe527fa0895c4
+          created: 1779582411675
+          modified: 1779582429832
+          isPrivate: false
+          description: ""
+          sortKey: -1779582411675
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.6.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url }}/albums/2UJcKiJxNryhL050F5Z1Fk"
+        name: Remover Álbum
+        meta:
+          id: req_2ea02f8f6aff449389c2f3c04842d6ce
+          created: 1779582489211
+          modified: 1779674680809
+          isPrivate: false
+          description: ""
+          sortKey: -1779582489211
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.6.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    headers:
+      - name: Authorization
+        value: Bearer {% response 'body', 'req_657b5cd7ebdf4756b8306400f022e545',
+          'b64::JC50b2tlbg==::46b', 'always', 60 %}
+        description: ""
+        disabled: false
+  - name: Reviews
+    meta:
+      id: fld_a02b212026c94e74981eea9842277c46
+      created: 1778524931773
+      modified: 1779581660635
+      sortKey: -1778524931773
+      description: ""
+    children:
+      - url: "{{ _.Localhost.base_url }}/reviews"
+        name: Criar/Atualizar Review
+        meta:
+          id: req_310100688b75475aac909172ed383966
+          created: 1779582728720
+          modified: 1779674708590
+          isPrivate: false
+          description: ""
+          sortKey: -1779582728720
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "album_id": "0USK9GYk8n1FQg5rUTWadD",
+              "rating": 5,
+              "comment": "Este álbum é simplesmente fantástico!"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.6.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url }}/reviews?album_id=0USK9GYk8n1FQg5rUTWadD"
+        name: Listar Avaliações de um Álbum
+        meta:
+          id: req_880ed99fabaf4ce1a42686dc949d051e
+          created: 1779582808884
+          modified: 1779674714075
+          isPrivate: false
+          description: ""
+          sortKey: -1779582808884
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.6.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.Localhost.base_url }}/reviews/28a9b539-5608-4b68-b6e5-9e7540ff3742"
+        name: Remover Review
+        meta:
+          id: req_c8fb105b257141fe9e8fec30aba58b2c
+          created: 1779582839177
+          modified: 1779674729189
+          isPrivate: false
+          description: ""
+          sortKey: -1779582839177
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.6.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    headers:
+      - name: Authorization
+        value: Bearer {% response 'body', 'req_657b5cd7ebdf4756b8306400f022e545',
+          'b64::JC50b2tlbg==::46b', 'always', 60 %}
+        description: ""
+        disabled: false
+  - name: Spotify
+    meta:
+      id: fld_b15449cda0064b82812c000cffcdb6b9
+      created: 1778524942873
+      modified: 1779581623508
+      sortKey: -1778524942873
+      description: ""
+    children:
+      - url: "{{ _.Localhost.base_url }}/api/search?q=Nirvana"
+        name: Pesquisar API
+        meta:
+          id: req_7f00857fb7e34655b7d8ffbc80611d5c
+          created: 1779582013443
+          modified: 1779672427619
+          isPrivate: false
+          description: ""
+          sortKey: -1779582013443
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.6.0
+            description: ""
+            disabled: false
+        authentication:
+          type: none
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    headers:
+      - name: Authorization
+        value: Bearer {% response 'body', 'req_657b5cd7ebdf4756b8306400f022e545',
+          'b64::JC50b2tlbg==::46b', 'always', 60 %}
+        description: ""
+        disabled: false
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_992a7a0c4b699c887f44c387b8a63c297d275d69
+    created: 1776195885989
+    modified: 1776195885989
+environments:
+  name: Base Environment
+  meta:
+    id: env_992a7a0c4b699c887f44c387b8a63c297d275d69
+    created: 1776195885983
+    modified: 1778525408089
+    isPrivate: false
+  data:
+    Localhost:
+      base_url: http://localhost:3000
+  subEnvironments:
+    - name: Spotify API
+      meta:
+        id: env_677f230a8b46488c9c4edc16be79d79f
+        created: 1778525388744
+        modified: 1779558035456
+        isPrivate: true
+        sortKey: 1778525388744
+      data:
+        Spotify API: https://api.spotify.com/v1
