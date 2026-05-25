@@ -66,6 +66,7 @@ function Home() {
 
   const handleRemoveAlbum = (id_spotify) => {
     setAlbums(prevAlbums => prevAlbums.filter(album => album.id_spotify !== id_spotify));
+    alert("Álbum removido com sucesso!");
   };
 
   // DIVISÃO DE CATEGORIAS
