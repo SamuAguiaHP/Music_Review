@@ -13,7 +13,7 @@ function Login() {
     e.preventDefault();
     setError('');
 
-   try {
+    try {
       const response = await api.post('/login', { email, password });
       const { token, user } = response.data;
 
@@ -25,7 +25,7 @@ function Login() {
       // Guarda no sítio certo
       storage.setItem('@MusicReview:token', token);
       storage.setItem('@MusicReview:user', JSON.stringify(user));
-      
+
       navigate('/'); // Vai para a Home
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao ligar ao servidor');
@@ -34,23 +34,23 @@ function Login() {
 
   return (
     /* FUNDO TOTAL: Ocupa toda a tela e centraliza o conteúdo interno (o container) */
-    <div className="vw-100 min-vh-100 m-0 p-0 d-flex align-items-center justify-content-center" 
-         style={{ background: 'linear-gradient(to bottom, #2b164d 0%, #0d0614 100%)', overflowX: 'hidden' }}>
-      
+    <div className="vw-100 min-vh-100 m-0 p-0 d-flex align-items-center justify-content-center"
+      style={{ background: 'linear-gradient(to bottom, #2b164d 0%, #0d0614 100%)', overflowX: 'hidden' }}>
+
       {/* CONTAINER: Impede que os itens se afastem infinitamente em telas grandes. */}
       <div className="container">
-        
+
         {/* ROW: g-4/g-lg-5 cria um espaçamento amigável entre os lados, e o justify-content-center junta os dois no meio */}
         <div className="row align-items-center justify-content-center gy-5 gx-lg-5">
-          
+
           {/* LADO DA MARCA: Reduzido de col-lg-6 para col-lg-5 para ficarem mais próximos do centro */}
           <div className="col-12 col-lg-5 d-flex flex-column justify-content-center align-items-center position-relative mb-5 pb-4 mb-lg-0 pb-lg-0">
-            
-            <div className="position-absolute top-50 start-50 translate-middle opacity-10 pointer-events-none" 
-                 style={{ fontSize: 'clamp(8rem, 15vw, 15rem)', zIndex: 0 }}>
+
+            <div className="position-absolute top-50 start-50 translate-middle opacity-10 pointer-events-none"
+              style={{ fontSize: 'clamp(8rem, 15vw, 15rem)', zIndex: 0 }}>
               🎵
             </div>
-            
+
             <div className="text-center position-relative" style={{ zIndex: 1 }}>
               <h1 className="display-4 fw-bold mb-2" style={{ color: '#c084fc', textShadow: '0 0 20px rgba(192,132,252,0.3)' }}>
                 MusicReview
@@ -61,16 +61,16 @@ function Login() {
 
           {/* LADO DO FORMULÁRIO: Também col-lg-5 para manter simetria */}
           <div className="col-12 col-lg-5 d-flex align-items-center justify-content-center">
-            
-            <div className="p-4 p-md-5 shadow-lg w-100" 
-                 style={{ 
-                   maxWidth: '420px', 
-                   backgroundColor: 'rgba(0, 0, 0, 0.25)', 
-                   backdropFilter: 'blur(12px)',
-                   WebkitBackdropFilter: 'blur(12px)',
-                   borderRadius: '24px'
-                 }}>
-              
+
+            <div className="p-4 p-md-5 shadow-lg w-100"
+              style={{
+                maxWidth: '420px',
+                backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                borderRadius: '24px'
+              }}>
+
               <h2 className="fw-bold mb-2 text-white">Bem-vindo de volta</h2>
               <p className="mb-4 small text-white-50">Por favor, insira seus dados para entrar.</p>
 
@@ -78,31 +78,14 @@ function Login() {
                 {error && <div className="alert alert-danger">{error}</div>}
                 <div className="mb-3">
                   <label className="form-label small fw-bold text-uppercase text-white-50">E-mail</label>
-                  <input 
-                    type="email" 
-                    className="form-control form-control-lg shadow-none text-white" 
+                  <input
+                    type="email"
+                    className="form-control form-control-lg shadow-none text-white"
                     placeholder="exemplo@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    style={{ 
-                      borderRadius: '10px', 
-                      fontSize: '1rem',
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)', 
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                    }}
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="form-label small fw-bold text-uppercase text-white-50">Senha</label>
-                  <input 
-                    type="password" 
-                    className="form-control form-control-lg shadow-none text-white" 
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    style={{ 
-                      borderRadius: '10px', 
+                    style={{
+                      borderRadius: '10px',
                       fontSize: '1rem',
                       backgroundColor: 'rgba(255, 255, 255, 0.05)',
                       border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -110,28 +93,55 @@ function Login() {
                   />
                 </div>
 
-            <div className="form-check mb-4">
-              <input 
-                className="form-check-input" 
-                type="checkbox" 
-                id="rememberMe" 
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)} // Atualiza quando clica
-              />
-              <label className="form-check-label text-secondary small d-flex" htmlFor="rememberMe">
-                Lembrar de mim
-              </label>
-            </div>
+                <div className="mb-4">
+                  <label className="form-label small fw-bold text-uppercase text-white-50">Senha</label>
+                  <input
+                    type="password"
+                    className="form-control form-control-lg shadow-none text-white"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={{
+                      borderRadius: '10px',
+                      fontSize: '1rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  />
+                </div>
 
-                <button type="submit" className="btn btn-lg w-100 fw-bold shadow-sm text-white" 
-                        style={{ background: '#a855f7', borderRadius: '12px', padding: '14px', border: 'none' }}>
+                <div className="form-check mb-4">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="rememberMe"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)} // Atualiza quando clica
+                  />
+                  <label className="form-check-label text-secondary small d-flex" htmlFor="rememberMe">
+                    Lembrar de mim
+                  </label>
+                </div>
+                <button type="submit" className="btn btn-lg w-100 fw-bold shadow-sm text-white"
+                  style={{ background: '#a855f7', borderRadius: '12px', padding: '14px', border: 'none' }}>
                   Entrar
                 </button>
+                <a
+                  href="/forgot-password"
+                  className="text-decoration-none small fw-semibold transition-all"
+                  style={{ color: '#c084fc' }}
+                  onMouseOver={(e) => e.target.style.color = '#a855f7'}
+                  onMouseOut={(e) => e.target.style.color = '#c084fc'}>
+                  Esqueci minha senha</a>
               </form>
-
               <div className="text-center mt-4 pt-3 border-top border-secondary">
                 <span className="text-white-50 small">Não tem uma conta? </span>
-                <a href="/register" className="text-decoration-none fw-bold" style={{ color: '#c084fc' }}>Crie uma agora</a>
+                <a href="/register"
+                  className="text-decoration-none fw-bold"
+                  style={{ color: '#c084fc' }}
+                  onMouseOver={(e) => e.target.style.color = '#a855f7'}
+                  onMouseOut={(e) => e.target.style.color = '#c084fc'}>
+                  Crie uma agora</a>
               </div>
             </div>
           </div>

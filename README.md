@@ -12,8 +12,8 @@ O **Music Review** é uma plataforma full-stack de avaliação musical desenvolv
 
 ---
 
-## 🚀 Status do Projeto: Biblioteca Privada & Integração Concluídas
-O sistema já conta com um fluxo completo e seguro de autenticação, e a integração ponta-a-ponta (Front-end ↔ Back-end ↔ Banco de Dados ↔ API do Spotify) está totalmente funcional. Os usuários já podem criar as suas bibliotecas musicais privadas, salvando e removendo álbuns de forma dinâmica.
+## 🚀 Status do Projeto: Concluido
+O sistema conta com um fluxo completo e seguro de autenticação, e a integração ponta-a-ponta (Front-end ↔ Back-end ↔ Banco de Dados ↔ API do Spotify) está totalmente funcional. Os usuários já podem criar as suas bibliotecas musicais privadas, salvando e removendo álbuns e reviews de forma dinâmica.
 
 ---
 
@@ -41,12 +41,14 @@ O sistema já conta com um fluxo completo e seguro de autenticação, e a integr
 * Autenticação via **JWT** (JSON Web Token) protegendo rotas privadas no backend.
 * Funcionalidade **"Lembrar de Mim"** gerenciando sessões no `localStorage` e `sessionStorage`.
 * Fluxo completo de **Recuperação de Senha** com envio de e-mail automatizado.
+* **Níveis de Acesso**: Rotas protegidas diferenciando usuários `STANDARD` de `ADMIN`.
 
 ### 💿 Biblioteca Privada & Integração Spotify
 * Busca de álbuns em tempo real utilizando a **API oficial do Spotify**.
 * **Biblioteca Isolada por Usuário:** O banco de dados relaciona os álbuns salvos especificamente ao usuário logado, garantindo total privacidade.
 * **Atualização Otimista (UI):** Salvamento e exclusão dinâmica de álbuns na interface, alternando estados e removendo itens da tela instantaneamente sem necessidade de recarregar a página.
 * Prevenção de duplicatas arquitetada diretamente no banco de dados.
+* **Gestão de Reviews**: CRUD completo para que usuários possam registrar, editar e excluir suas avaliações.
 
 ---
 
@@ -102,18 +104,25 @@ Acesse a aplicação no navegador através de: `http://localhost:5173`
 
 ---
 
-## 🚩 Próximos Passos
-- [x] Integração com a **API do Spotify** para busca real de dados.
-- [x] Desenvolvimento do **Front-end** em React + Vite.
-- [x] Implementação de Autenticação completa (JWT + Recuperação de Senha).
-- [x] Criação da **Biblioteca Privada** (Salvar/Remover Álbuns com relação de usuários).
-- [x] **Diferenciação de Álbuns e Músicas** no Front-end e Back-end.
-- [x] Desenvolvimento do **CRUD de Reviews** (Dar notas e comentar os itens salvos).
-- [ ] Implementação de Testes Automatizados (Jest/SuperTest).
+## 📋 Documentação da API (Endpoints)
+
+| Método | Endpoint | Descrição | Acesso |
+| --- | --- | --- | --- |
+| `POST` | `/auth/register` | Cria novo usuário | Público |
+| `POST` | `/auth/login` | Login e geração de JWT | Público |
+| `DELETE` | `/users/:id` | Exclusão de usuário | ADMIN |
+| `GET` | `/users` | Listar Usuários | ADMIN |
+| `GET` | `/spotify/search` | Busca na API do Spotify | Autenticado |
+| `DELETE` | `/reviews` | Exclusão de avaliação | Autenticado |
+| `GET` | `/reviews` | Listar avaliação | Autenticado |
+| `POST` | `/reviews` | Criação de avaliação | Autenticado |
+| `DELETE` | `/albums/:id` | Exclusão de álbum | Autenticado |
+| `GET` | `/albums` | Listar álbuns | Autenticado |
+| `POST` | `/albums` | Salvar álbum | Autenticado |
 
 ---
 
 ## 👨‍💻 Autor
-**Samuel**  
-Estudante de Ciência da Computação - **UFLA**  
-Trainee Comp Júnior 2026
+**Samuel Aguiar Guimarães**  
+Ciência da Computação - **UFLA**  
+Trainee Comp Júnior
